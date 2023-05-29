@@ -1,14 +1,14 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import TheHeader from './components/TheHeader.vue'
 </script>
 
 <template>
   <v-app>
-    <v-layout>
-      <v-btn prepend-icon="mdi-vuetify">
-        Button
-      </v-btn>
+    <TheHeader></TheHeader>
+    <!-- <v-navigation-drawer></v-navigation-drawer> -->
+    <v-layout class="pt-16 w-100">
       <RouterView />
     </v-layout>
   </v-app>
