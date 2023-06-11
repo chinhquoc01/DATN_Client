@@ -6,6 +6,16 @@ import router from './router'
 
 import './assets/main.css'
 
+import Toast from "vue-toastification";
+// Import the CSS or use your own!
+import "vue-toastification/dist/index.css";
+
+const toastOptions = {
+    // You can set your default options here
+    timeout: 4000,
+    maxToasts: 3
+};
+
 // Vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -22,5 +32,6 @@ const vuetify = createVuetify({
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
+app.use(Toast, toastOptions);
 
 app.mount('#app')

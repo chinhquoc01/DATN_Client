@@ -11,5 +11,9 @@ export default {
         online: 0,
         offline: 1,
         hybrid: 2
+    },
+    userType: {
+        client: 0,
+        freelancer: 1
     }
 }

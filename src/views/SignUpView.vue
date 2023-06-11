@@ -25,11 +25,11 @@
                             type="password" clearable label="Nhập lại mật khẩu"></v-text-field>
 
                         <v-radio-group v-model="userInfo.userType" inline>
-                            <v-radio label="Tôi là khách hàng" :value="0"></v-radio>
-                            <v-radio label="Tôi là freelancer" :value="1"></v-radio>
+                            <v-radio label="Tôi là khách hàng" :value="enums.userType.client"></v-radio>
+                            <v-radio label="Tôi là freelancer" :value="enums.userType.freelancer"></v-radio>
                         </v-radio-group>
 
-                        <div v-if="userInfo.userType == '1'">
+                        <div v-if="userInfo.userType == enums.userType.freelancer">
                             <v-text-field v-model="userInfo.jobTitle" :readonly="loading" :rules="[required]" class="mb-2"
                                 clearable label="Chức danh"></v-text-field>
                             <v-text-field v-model="userInfo.description" :readonly="loading" :rules="[required]"
@@ -56,6 +56,7 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'vue-router';
 import skillList from '@/constants/skillList.js'
+import enums from '@/constants/enums';
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -68,7 +69,7 @@ const errorMessage = ref('')
 
 const onSubmit = async () => {
     if (!form.value) return
-    if (userInfo.value.userType == 1 && userInfo.value.skillList) {
+    if (userInfo.value.userType == enums.userType.freelancer && userInfo.value.skillList) {
         userInfo.value.skills = JSON.stringify(userInfo.value.skillList)
     } else {
         userInfo.value.skills = JSON.stringify([])

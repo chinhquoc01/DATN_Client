@@ -1,12 +1,10 @@
 <template>
     <div class="d-flex w-100 align-items-center justify-center">
         <v-col sm="8" md="5">
-            <div class="text-h5">Đăng công việc mới</div>
-            <v-alert v-show="showAlert" color="error" icon="$error" title="Có lỗi xảy ra"
-                :text="errorMessage" closable></v-alert>
+            <div class="text-h5">Sửa công việc</div>
             <v-sheet class="pt-6 w-100" rounded>
                 <v-card class="mx-auto px-6 py-8">
-                    <v-form v-model="form" @submit.prevent="onSubmit" validate-on="input">
+                    <v-form @submit.prevent="onSubmit" validate-on="input">
                         <v-text-field v-model="jobInfo.title" :readonly="loading" :rules="requiredRule" class="mb-2"
                             clearable label="Tiêu đề"></v-text-field>
 
@@ -50,9 +48,9 @@
                         </v-textarea>
                         <br>
 
-                        <v-btn :disabled="!form" :loading="loading" block color="success" size="large" type="submit"
+                        <v-btn :loading="loading" block color="success" size="large" type="submit"
                             variant="elevated">
-                            Đăng bài
+                            Lưu bài
                         </v-btn>
                     </v-form>
                 </v-card>
@@ -68,15 +66,22 @@ import workApi from '@/apis/workApi.js'
 import { useAuthStore } from '@/stores/authStore';
 import { useCommonUltilities } from '@/services/commonUlti'
 
-const { enums, router, toast } = useCommonUltilities()
+const { route, router, toast, enums } = useCommonUltilities()
 const authStore = useAuthStore()
+
 const skills = ref(skillList)
 const loading = ref(false)
-const form = ref(false)
+const form = ref(true)
 
-const jobInfo = ref({type: 0, budgetType: 0})
-const showAlert = ref(false)
-const errorMessage = ref('')
+const jobInfo = ref({})
+const getJobById = async (jobId) => {
+    let res = await workApi.getById(jobId)
+    if (res && res.status == 200) {
+        jobInfo.value = res.data
+        jobInfo.value.fieldTagList = JSON.parse(res.data.fieldTag)
+    }
+}
+getJobById(route.query.id)
 
 const requiredRule = ref([
     v => !!v || 'Thông tin không được bỏ trống'
@@ -89,22 +94,17 @@ const onSubmit = async () => {
     // } else {
     //     jobInfo.value.skills = JSON.stringify([])
     // }
-    showAlert.value = false
-    jobInfo.value.clientId = authStore.userInfo.id
     jobInfo.value.fieldTag = JSON.stringify(jobInfo.value.fieldTagList)
-    jobInfo.value.status = enums.workStatus.new
 
     loading.value = true
-    let res = await workApi.postWork(jobInfo.value)
+    let res = await workApi.editWork(jobInfo.value)
     loading.value = false
     if (res && res.status === 200) {
         // thanh cong
-        toast.success('Thêm công việc thành công')
-        showAlert.value = false
+        toast.success('Sửa công việc thành công')
         await router.push({ name: 'clientView' })
     } else {
-        errorMessage.value = res.data.devMsg || res.data.userMsg
-        showAlert.value = true
+        toast.error(res.data.userMsg || 'Có lỗi xảy ra')
     }
 
     setTimeout(() => (loading.value = false), 2000)
