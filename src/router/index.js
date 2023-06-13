@@ -65,6 +65,11 @@ const router = createRouter({
 					path: '',
 					name: 'freelancerView',
 					component: () => import('../views/freelancer/FreelancerView.vue')
+				},
+				{
+					path: 'work/:workId',
+					name: 'workDetail',
+					component: () => import('../views/freelancer/WorkDetail.vue')
 				}
 			]
 		}

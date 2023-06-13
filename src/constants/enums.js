@@ -15,5 +15,11 @@ export default {
     userType: {
         client: 0,
         freelancer: 1
+    },
+    proposalStatus: {
+        pending: 0,
+        accept: 1,
+        reject: 2,
+        negotiating: 3
     }
 }

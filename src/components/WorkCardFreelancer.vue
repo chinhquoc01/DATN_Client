@@ -10,22 +10,9 @@
 							<span>{{ workInfo.location }}</span>
 						</div>
 					</div>
-					<v-menu>
-						<template v-slot:activator="{ props }">
-							<v-btn class="menu-btn" variant="plain" icon="mdi-dots-vertical" v-bind="props"></v-btn>
-						</template>
-						<v-list>
-							<v-list-item class="menu-item" @click="editWork(workInfo)">
-								<v-list-item-title>Sửa</v-list-item-title>
-							</v-list-item>
-							<v-list-item class="menu-item" @click="deleteWork(workInfo)">
-								<v-list-item-title>Xoá
-								</v-list-item-title>
-							</v-list-item>
-						</v-list>
-					</v-menu>
+					
 				</div>
-				<div class="text-h5 mb-1">
+				<div class="text-h5 mb-1" @click="viewWorkDetail(workInfo)">
 					{{ workInfo.title }}
 				</div>
 				<div class="text-caption">{{ workInfo.description }}</div>
@@ -33,16 +20,8 @@
 				<v-chip-group>
 					<v-chip v-for="field in fieldTag">{{ field }}</v-chip>
 				</v-chip-group>
-				<div class="d-flex justify-space-evenly">
-					<div class="d-flex flex-column align-center">
-						<div><b>{{ workInfo.proposalCount }}</b></div>
-						<div>Ứng tuyển</div>
-					</div>
-					<div class="d-flex flex-column align-center">
-						<div><b>{{ workInfo.messageCount }}</b></div>
-						<div>Tin nhắn</div>
-					</div>
-				</div>
+				<div>{{ workInfo.proposalCount }}</div>
+				<v-btn :to="{name: 'workDetail', params: { workId: workInfo.id }}">Ứng tuyển</v-btn>
 			</div>
 		</v-card-item>
 
@@ -63,8 +42,6 @@ const fieldTag = ref(JSON.parse(props.workInfo.fieldTag))
 
 const emit = defineEmits(['editWork', 'removeWork'])
 
-const isShowDialog = ref(true)
-
 const getWorkType = (workType) => {
 	switch (workType) {
 		case 0:
@@ -78,11 +55,8 @@ const getWorkType = (workType) => {
 	}
 }
 
-const editWork = (workInfo) => {
-	emit('editWork', workInfo)
-}
-const deleteWork = (workInfo) => {
-	emit('removeWork', workInfo)
+const viewWorkDetail = (workInfo) => {
+
 }
 
 </script>
