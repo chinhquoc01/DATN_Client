@@ -38,6 +38,7 @@ const router = createRouter({
 			name: '403',
 			component: () => import('../views/system/403.vue')
 		},
+		
 		{
 			path: '/client',
 			children: [
@@ -55,7 +56,17 @@ const router = createRouter({
 					path: 'edit-post',
 					name: 'editPost',
 					component: () => import('../views/client/EditPostView.vue')
-				}
+				},
+				{
+					path: 'work-detail/:workId',
+					name: 'postDetail',
+					component: () => import('../views/client/WorkDetailViewClient.vue')
+				},
+				{
+					path: 'chat',
+					name: 'chatClient',
+					component: () => import('../components/ChatBox.vue')
+				},
 			]
 		},
 		{
@@ -70,7 +81,12 @@ const router = createRouter({
 					path: 'work/:workId',
 					name: 'workDetail',
 					component: () => import('../views/freelancer/WorkDetail.vue')
-				}
+				},
+				{
+					path: 'chat',
+					name: 'chatFreelancer',
+					component: () => import('../components/ChatBox.vue')
+				},
 			]
 		}
 	]
@@ -80,7 +96,7 @@ router.beforeEach(async (to) => {
 	const authStore = useAuthStore();
 
 	// redirect to login page if not logged in and trying to access a restricted page
-	const publicPages = ['/', '/login', '/signup'];
+	const publicPages = ['/', '/login', '/signup', '/chat'];
 	const authRequired = !publicPages.includes(to.path);
 
 	const clientPages = ['client']

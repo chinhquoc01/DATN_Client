@@ -61,7 +61,7 @@ const onSubmit = async () => {
 
 const emailRules = ref([
     v => !!v || 'Email không được bỏ trống',
-    v => (v && /^[a-z.-]+@[a-z.-]+\.[a-z]+$/i.test(v)) || 'Email không hợp lệ',
+    v => (v && /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i.test(v)) || 'Email không hợp lệ',
 ])
 const passwordRules = ref([
     v => !!v || 'Mật khẩu không được bỏ trống',

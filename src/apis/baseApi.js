@@ -32,7 +32,7 @@ axios.interceptors.response.use(function (response) {
 export class BaseApi {
     constructor(controllerName = '') {
         this.controllerName = controllerName
-        this.API_URL = 'https://localhost:44360/api/' + this.controllerName
+        this.API_URL = `${import.meta.env.VITE_BASE_URL}/api/` + this.controllerName
         this.config = {
             headers: {
                 'Content-Type': 'application/json'
@@ -47,8 +47,7 @@ export class BaseApi {
             return this.handleResponse(response)
 
         } catch (error) {
-            console.error(error);
-            return null
+            return this.handleError(error)
         }
     }
 

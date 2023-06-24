@@ -15,6 +15,16 @@ class ProposalApi extends BaseApi {
         let res = await this.post(this.API_URL, proposal)
         return res
     }
+
+    async getProposalByWork(workId) {
+        let res = await this.get(this.API_URL + '/work/' + workId)
+        return res
+    }
+
+    async acceptProposal(proposalId) {
+        let res = await this.post(this.API_URL + '/accept/' + proposalId)
+        return res
+    }
 }
 
 export default new ProposalApi()

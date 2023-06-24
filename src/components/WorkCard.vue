@@ -26,7 +26,9 @@
 					</v-menu>
 				</div>
 				<div class="text-h5 mb-1">
-					{{ workInfo.title }}
+					<router-link :to="{name: 'postDetail', params: {workId: workInfo.id}}">
+						{{ workInfo.title }}
+					</router-link>
 				</div>
 				<div class="text-caption">{{ workInfo.description }}</div>
 				<div><v-icon icon="mdi-cash"></v-icon>{{ workInfo.budget }} VND</div>
