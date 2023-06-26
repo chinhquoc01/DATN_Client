@@ -1,5 +1,5 @@
 <template>
-	<v-card class="mx-auto" max-width="344" variant="outlined">
+	<v-card class="mx-auto" max-width="644" variant="outlined">
 		<v-card-item>
 			<div>
 				<div class="d-flex justify-space-between">
@@ -12,16 +12,21 @@
 					</div>
 					
 				</div>
-				<div class="text-h5 mb-1" @click="viewWorkDetail(workInfo)">
-					{{ workInfo.title }}
+				<div class="d-flex justify-space-between">
+					<div class="text-h5 mb-1" @click="viewWorkDetail(workInfo)">
+						{{ workInfo.title }}
+					</div>
+					<slot name="button">
+						<v-btn color="#5865f2" :to="{name: 'workDetail', params: { workId: workInfo.id }}" rounded="xl" variant="tonal">Ứng tuyển</v-btn>
+					</slot>
 				</div>
 				<div class="text-caption">{{ workInfo.description }}</div>
 				<div><v-icon icon="mdi-cash"></v-icon>{{ workInfo.budget }} VND</div>
 				<v-chip-group>
 					<v-chip v-for="field in fieldTag">{{ field }}</v-chip>
 				</v-chip-group>
-				<div>{{ workInfo.proposalCount }}</div>
-				<v-btn :to="{name: 'workDetail', params: { workId: workInfo.id }}">Ứng tuyển</v-btn>
+				<div>Đã ứng tuyển: {{ workInfo.proposalCount || 0 }}</div>
+				<slot name="proposal"></slot>
 			</div>
 		</v-card-item>
 

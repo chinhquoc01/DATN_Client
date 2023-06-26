@@ -10,6 +10,11 @@ class UserApi extends BaseApi {
         let res = await this.get(this.API_URL)
         return res
     }
+
+    async getUserById(userId) {
+        let res = await this.get(this.API_URL + `/${userId}`)
+        return res
+    }
 }
 
 export default new UserApi()

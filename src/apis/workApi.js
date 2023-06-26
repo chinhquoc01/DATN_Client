@@ -39,6 +39,11 @@ class WorkApi extends BaseApi {
         let res = await this.post(this.API_URL + `/suggest-for-freelancer?freelancerId=${freelancerId}&expectIncome=${expectIncome}`, skillList)
         return res
     }
+
+    async getProposalList(freelancerId) {
+        let res = await this.get(this.API_URL + `/proposal-list?freelancerId=${freelancerId}`)
+        return res
+    }
 }
 
 export default new WorkApi()

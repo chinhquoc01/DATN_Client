@@ -19,8 +19,11 @@
                                         <v-btn color="success" rounded="xl" size="small" variant="outlined" @click="message(proposal)">
                                             Nhắn tin
                                         </v-btn>
-                                        <v-btn color="success" rounded="xl" class="ml-2" size="small" variant="elevated" @click="accept(proposal)">
-                                            Chấp nhận
+                                        <v-btn v-if="proposal.status == enums.proposalStatus.pending" color="success" rounded="xl" class="ml-2" size="small" variant="elevated" @click="accept(proposal)">
+                                            Gửi hợp đồng
+                                        </v-btn>
+                                        <v-btn v-if="proposal.status == enums.proposalStatus.negotiating" disabled color="success" rounded="xl" class="ml-2" size="small" variant="elevated">
+                                            Chờ xác nhận
                                         </v-btn>
                                     </div>
                                 </div>
@@ -48,7 +51,7 @@ import { useCommonUltilities } from '@/services/commonUlti'
 import workApi from '@/apis/workApi';
 import proposalApi from '@/apis/proposalApi'
 
-const { route, toast, router } = useCommonUltilities()
+const { route, toast, router, enums } = useCommonUltilities()
 
 const workId = route.params.workId
 const workInfo = ref({})
@@ -80,10 +83,12 @@ const message = (proposal) => {
 }
 
 const accept = async (proposal) => {
-    let res = await proposalApi.acceptProposal(proposal.id)
-    if (res && res.status == 200) {
-        
-    } 
+    router.push({
+        name: 'newContract',
+        query: {
+            proposalId: proposal.id
+        }
+    })
 }
 </script>
 

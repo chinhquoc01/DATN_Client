@@ -21,5 +21,10 @@ export default {
         accept: 1,
         reject: 2,
         negotiating: 3
+    },
+    contractStatus: {
+        new: 0,
+        valid: 1,
+        expired: 2
     }
 }

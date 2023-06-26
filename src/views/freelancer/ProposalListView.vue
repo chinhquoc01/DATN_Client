@@ -4,12 +4,19 @@
             Freelacner view
             <div v-for="work in workList">
                 <work-card-freelancer :work-info="work">
+                    <template #button>
+                        <v-btn color="#5865f2" :to="{name: 'chatFreelancer', query: { userId: work.clientId }}" rounded="xl" variant="tonal">Nhắn tin</v-btn>
+                    </template>
+                    <template #proposal>
+                        <v-divider></v-divider>
+                        <div>Thư ngỏ: {{ work.proposalContent }}</div>
+                        <div>Thu nhập mong muốn: {{ work.expectedPrice }}</div>
+                    </template>
                 </work-card-freelancer>
             </div>
         </v-col>
     </div>
 </template>
-
 <script setup>
 import WorkCardFreelancer from '@/components/WorkCardFreelancer.vue';
 import { ref } from 'vue';
@@ -17,12 +24,10 @@ import { useCommonUltilities } from '@/services/commonUlti'
 import { useAuthStore } from '@/stores/authStore';
 import workApi from '@/apis/workApi';
 
-const { toast, router } = useCommonUltilities()
 const authStore = useAuthStore()
 const workList = ref([])
 const getSuggestWork = async () => {
-    let skillList = JSON.parse(authStore.userInfo.skills) ?? []
-    let res = await workApi.getWorkForFreelancer(authStore.userInfo.id, authStore.userInfo.hourlyRate, skillList)
+    let res = await workApi.getProposalList(authStore.userInfo.id)
     if (res && (res.status == 200 || res.status == 204)) {
         workList.value = res.data
     }

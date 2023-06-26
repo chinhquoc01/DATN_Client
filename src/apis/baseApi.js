@@ -41,6 +41,11 @@ export class BaseApi {
         
     }
 
+    async getById(id) {
+        let res = this.get(this.API_URL + `/${id}`)
+        return res
+    }
+
     async get(url) {
         try {
             let response = await axios.get(url, this.config)

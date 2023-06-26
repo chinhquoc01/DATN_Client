@@ -67,6 +67,11 @@ const router = createRouter({
 					name: 'chatClient',
 					component: () => import('../components/ChatBox.vue')
 				},
+				{
+					path: 'new-contract',
+					name: 'newContract',
+					component: () => import('../views/client/NewContractView.vue')
+				},
 			]
 		},
 		{
@@ -86,6 +91,11 @@ const router = createRouter({
 					path: 'chat',
 					name: 'chatFreelancer',
 					component: () => import('../components/ChatBox.vue')
+				},
+				{
+					path: 'proposal-list',
+					name: 'proposalList',
+					component: () => import('../views/freelancer/ProposalListView.vue')
 				},
 			]
 		}

@@ -1,7 +1,9 @@
 <template>
-    <div class="w-100 d-flex" @mouseup="endResize">
+    <div class="w-100 d-flex chat-view" @mouseup="endResize">
         <div class="user-list mt-3 flex-column" :style="{width: `${userListWidth}%`}">
-            <div v-for="(user, index) in listUser" :key="index" class="user-item pt-1 pb-1" @click="selectChat(user)">
+            <div v-for="(user, index) in listUser" :key="index"  
+                class="user-item pt-1 pb-1" :class="{'active-chat': user.id == receiverId}" 
+                @click="selectChat(user)">
                 <v-list-item :prepend-avatar="`https://ui-avatars.com/api/?name=${user.name}`">
                     <template v-slot:title>
                         {{user.name}}
@@ -14,9 +16,13 @@
             </div>
         </div>
         <v-divider vertical :thickness="4" class="divider" @mousedown="startResize"></v-divider>
-        <div class="chat-section flex-column d-flex" :style="{width: `calc(100% - ${userListWidth}%)`}">
-            <div class="message-history">
+        <div id="chat-section-id" class="chat-section flex-column d-flex" :style="{width: `calc(100% - ${userListWidth}%)`}">
+            <div v-if="receiverInfo" class="chat-info d-flex align-center">
+                <img :src="receiverInfo.avatar || `https://ui-avatars.com/api/?name=${receiverInfo.name}`" 
+                    class="rounded-circle h-75 mr-2 ml-2" alt="" srcset=""/>
                 <div>{{ receiverInfo.name }}</div>
+            </div>
+            <div class="message-history">
                 <div class="d-flex flex-column">
                     <div v-for="(message, index) in messageList" :key="index" class="message-group" :class="{'my-message-group': message.senderId == senderId, 'their-message-group': message.senderId == receiverId}">
                         <div class="message">
@@ -28,8 +34,10 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex align-end chat-input">
-                <v-textarea v-model="messageText" class="" placeholder="Nhập tin nhắn" @keyup.enter.prevent="sendMessage" auto-grow rows="1"></v-textarea>
+            <div v-if="receiverInfo" class="d-flex align-end chat-input">
+                <v-textarea v-model="messageText" class="" placeholder="Nhập tin nhắn" 
+                    @keyup.enter.prevent="sendMessage" auto-grow rows="1"
+                    variant="solo"></v-textarea>
                 <v-btn @click="sendMessage">Gửi</v-btn>
             </div>
     
@@ -43,6 +51,8 @@ import { useCommonUltilities } from '@/services/commonUlti';
 import { useAuthStore } from '@/stores/authStore';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr'
 import messageApi from '@/apis/messageApi';
+import userApi from '@/apis/userApi';
+import { nextTick } from 'vue';
 
 const { route } = useCommonUltilities()
 const authStore = useAuthStore()
@@ -56,12 +66,14 @@ const messageList = ref([])
 const messageText = ref('')
 const senderId = ref(authStore.userInfo.id)
 const receiverId = ref(route.query.userId)
-const receiverInfo = ref({})
+const receiverInfo = ref(null)
 
 const selectChat = async (user) => {
     receiverInfo.value = user
     receiverId.value = user.id
     messageList.value = await getChatHistory(senderId.value, receiverId.value)
+    await nextTick()
+    scrollToBottom('chat-section-id')
     if (channel.value) {
         connection.off(channel.value)
     }
@@ -83,6 +95,12 @@ const startConnection = () => {
         console.log(error);
     })
 }
+
+const scrollToBottom = (id) => {
+    const element = document.getElementById(id);
+    element.scrollTop = element.scrollHeight;
+}
+
 const sendMessage = async () => {
     try {
         if (messageText.value) {
@@ -90,6 +108,7 @@ const sendMessage = async () => {
             let workId = route.query.workId
             await connection.invoke("SendMessage", messageText.value, senderId.value, receiverId.value, workId)
             messageText.value = ''
+            scrollToBottom('chat-section-id')
         }
         
     } catch (error) {
@@ -114,7 +133,20 @@ const getListUserMessage = async (userId) => {
         listUser.value = []
     }  
 }
-getListUserMessage(senderId.value)
+getListUserMessage(senderId.value).then(async () => {
+    if (receiverId.value) { 
+        let foundUser = listUser.value.find(user => user.id == receiverId.value)
+        if(!foundUser) {
+            let userInfoRes = await userApi.get(receiverId.value)
+            if (userInfoRes.status == 200) {
+                listUser.value.unshift(userInfoRes.data)
+                selectChat(userInfoRes.data)
+            }
+        } else {
+            selectChat(foundUser)
+        }
+    }
+})
 
 
 
@@ -141,16 +173,27 @@ const handleDateTime = (isoDatetime) => {
 </script>
 
 <style scoped lang="scss">
+.chat-view {
+    height: calc(100vh - 64px);
+}
 .user-list {
     min-width: 250px;
+}
+.user-item {
+    border-radius: 12px;
+
 }
 .user-item :hover {
     cursor: pointer;
     background-color: rgb(209, 208, 208);
 }
+.active-chat {
+    background-color: rgb(221, 220, 220);
+}
 .chat-section {
     flex-grow: 1;
     min-width: 50%;
+    overflow: scroll;
 }
 .divider {
     cursor: ew-resize;
@@ -162,6 +205,9 @@ const handleDateTime = (isoDatetime) => {
 .chat-input {
     height: 60px;
     padding: 8px 0;
+    position: sticky;
+    bottom: 0;
+    background-color: white;
 }
 :deep(.v-input__details) {
     display: none;
@@ -186,5 +232,12 @@ const handleDateTime = (isoDatetime) => {
     margin-top: 2px;
     padding: 4px 12px;
     border-radius: 16px;
+}
+.chat-info {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 99;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 4px 0px;
 }
 </style>

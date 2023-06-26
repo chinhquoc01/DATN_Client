@@ -13,8 +13,12 @@ import "vue-toastification/dist/index.css";
 const toastOptions = {
     // You can set your default options here
     timeout: 4000,
-    maxToasts: 3
+    maxToasts: 3,
+    position: 'bottom-right'
 };
+
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 // Vuetify
 import 'vuetify/styles'
@@ -29,6 +33,7 @@ const vuetify = createVuetify({
     directives,
 })
 
+app.component('VueDatePicker', VueDatePicker)
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
