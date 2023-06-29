@@ -93,9 +93,14 @@ const router = createRouter({
 					component: () => import('../components/ChatBox.vue')
 				},
 				{
-					path: 'proposal-list',
+					path: 'proposals',
 					name: 'proposalList',
 					component: () => import('../views/freelancer/ProposalListView.vue')
+				},
+				{
+					path: 'contracts',
+					name: 'contractList',
+					component: () => import('../views/freelancer/ContractListView.vue')
 				},
 			]
 		}

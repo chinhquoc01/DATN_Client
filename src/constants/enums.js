@@ -25,6 +25,7 @@ export default {
     contractStatus: {
         new: 0,
         valid: 1,
-        expired: 2
+        expired: 2,
+        rejected: 3
     }
 }

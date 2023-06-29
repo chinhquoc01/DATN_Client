@@ -43,6 +43,7 @@ import { useCommonUltilities } from '@/services/commonUlti'
 import proposalApi from '@/apis/proposalApi';
 import contractApi from '@/apis/contractApi';
 import { useAuthStore } from '@/stores/authStore';
+import workApi from '@/apis/workApi';
 
 const { enums, router, toast, route } = useCommonUltilities()
 const authStore = useAuthStore()
@@ -57,14 +58,26 @@ const getProposalInfo = async () => {
     let res = await proposalApi.getById(proposalId)
     if (res && res.status == 200) {
         proposal.value = res.data
+        let workId = proposal.value.workId
+        workInfo.value = await getWorkInfo(workId)
     }
 }
 getProposalInfo()
 
 
+const workInfo = ref({})
+const getWorkInfo = async (workId) => {
+    let res = await workApi.getById(workId)
+    if (res && res.status == 200) {
+        return res.data
+    }
+    return {}
+}
+
 
 const onSubmit = async () => {
     if (!form.value) return
+    contract.value.contractName = workInfo.value.title
     contract.value.proposalId = proposalId
     contract.value.workId = proposal.value.workId
     contract.value.freelancerId = proposal.value.freelancerId

@@ -5,6 +5,7 @@
             <div class="d-flex">
                 <div @click="clickHome" class="logo">Gigify</div>
                 <div v-if="authStore.loggedIn && authStore.isFreelancer()" @click="clickProposal" class="nav-item ml-4">Ứng tuyển</div>
+                <div v-if="authStore.loggedIn && authStore.isFreelancer()" @click="clickContracts" class="nav-item ml-4">Hợp đồng</div>
                 <div v-if="authStore.loggedIn" @click="clickMessage" class="nav-item ml-4">Tin nhắn</div>
             </div>
         </v-app-bar-title>
@@ -33,6 +34,10 @@ const clickMessage = () => {
 }
 const clickProposal = () => {
     router.push({ name: 'proposalList' })
+}
+
+const clickContracts = () => {
+    router.push({name: 'contractList'})
 }
 const signOut = () => {
     authStore.logout()
