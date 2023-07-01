@@ -16,15 +16,22 @@
                                 <div class="d-flex justify-space-between align-center">
                                     <div>{{ proposal.freelancerName }} <b v-if="proposal.jobTitle">({{ proposal.jobTitle }})</b></div>
                                     <div class="d-flex">
-                                        <v-btn color="success" rounded="xl" size="small" variant="outlined" @click="message(proposal)">
+                                        <v-btn color="success" rounded="xl" size="medium" class="pr-2 pl-2" variant="outlined" @click="message(proposal)">
                                             Nhắn tin
                                         </v-btn>
                                         <v-btn v-if="proposal.status == enums.proposalStatus.pending" color="success" rounded="xl" class="ml-2" size="small" variant="elevated" @click="accept(proposal)">
                                             Gửi hợp đồng
                                         </v-btn>
-                                        <v-btn v-if="proposal.status == enums.proposalStatus.negotiating" disabled color="success" rounded="xl" class="ml-2" size="small" variant="elevated">
+                                        <v-btn v-else-if="proposal.status == enums.proposalStatus.negotiating" disabled color="success" rounded="xl" class="ml-2" size="small" variant="elevated">
                                             Chờ xác nhận
                                         </v-btn>
+                                        <v-chip v-else-if="proposal.status == enums.proposalStatus.accept" 
+                                            color="teal"
+                                            text-color="white"
+                                            prepend-icon="mdi-checkbox-marked-circle"
+                                            >
+                                            Đã chấp nhận
+                                        </v-chip>
                                     </div>
                                 </div>
                                 <div>{{ proposal.address }}</div>

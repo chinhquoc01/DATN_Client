@@ -14,6 +14,16 @@ class WorkApi extends BaseApi {
         let res = await this.get(this.API_URL+ '/' + jobId)
         return res
     }
+
+    async getByFreelancerId(freelancerId) {
+        let res = await this.get(this.API_URL+ `/freelancer?freelancerId=${freelancerId}`)
+        return res
+    }
+
+    async getWorkFreelancerDetail(workId, freelancerId) {
+        let res = await this.get(this.API_URL + `/detail-freelancer?workId=${workId}&freelancerId=${freelancerId}`)
+        return res
+    }
     
     async postWork(workInfo) {
         let res = await this.post(this.API_URL, workInfo)
@@ -42,6 +52,11 @@ class WorkApi extends BaseApi {
 
     async getProposalList(freelancerId) {
         let res = await this.get(this.API_URL + `/proposal-list?freelancerId=${freelancerId}`)
+        return res
+    }
+
+    async updateProgress(workId, progress) {
+        let res = await this.put(this.API_URL + `/update-progress?workId=${workId}&progress=${progress}`)
         return res
     }
 }

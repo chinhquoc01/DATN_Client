@@ -21,11 +21,11 @@
 					</slot>
 				</div>
 				<div class="text-caption">{{ workInfo.description }}</div>
-				<div><v-icon icon="mdi-cash"></v-icon>{{ workInfo.budget }} VND</div>
+				<div v-if="isSuggestWork"><v-icon icon="mdi-cash"></v-icon>{{ workInfo.budget }} VND</div>
 				<v-chip-group>
 					<v-chip v-for="field in fieldTag">{{ field }}</v-chip>
 				</v-chip-group>
-				<div>Đã ứng tuyển: {{ workInfo.proposalCount || 0 }}</div>
+				<div v-if="isSuggestWork">Đã ứng tuyển: {{ workInfo.proposalCount || 0 }}</div>
 				<slot name="proposal"></slot>
 			</div>
 		</v-card-item>
@@ -40,12 +40,16 @@ import { ref } from 'vue';
 
 
 const props = defineProps({
-	workInfo: Object
+	workInfo: Object,
+	isSuggestWork: {
+		type: Boolean,
+		default: true
+	}
 })
 
 const fieldTag = ref(JSON.parse(props.workInfo.fieldTag))
 
-const emit = defineEmits(['editWork', 'removeWork'])
+const emit = defineEmits(['editWork', 'removeWork', 'clickTitle'])
 
 const getWorkType = (workType) => {
 	switch (workType) {
@@ -61,7 +65,7 @@ const getWorkType = (workType) => {
 }
 
 const viewWorkDetail = (workInfo) => {
-
+	emit('clickTitle', workInfo)
 }
 
 </script>

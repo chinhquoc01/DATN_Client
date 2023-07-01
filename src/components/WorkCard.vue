@@ -3,27 +3,41 @@
 		<v-card-item>
 			<div>
 				<div class="d-flex justify-space-between">
-					<div class="text-overline d-flex justify-start">
+					<div class="text-overline">
 						<div>{{ getWorkType(workInfo.type) }} </div>
-						<div v-if="workInfo.type != enums.workType.online && workInfo.location" class="ml-2">
-							<v-icon icon="mdi-map-marker"></v-icon>
-							<span>{{ workInfo.location }}</span>
-						</div>
 					</div>
-					<v-menu>
-						<template v-slot:activator="{ props }">
-							<v-btn class="menu-btn" variant="plain" icon="mdi-dots-vertical" v-bind="props"></v-btn>
-						</template>
-						<v-list>
-							<v-list-item class="menu-item" @click="editWork(workInfo)">
-								<v-list-item-title>Sửa</v-list-item-title>
-							</v-list-item>
-							<v-list-item class="menu-item" @click="deleteWork(workInfo)">
-								<v-list-item-title>Xoá
-								</v-list-item-title>
-							</v-list-item>
-						</v-list>
-					</v-menu>
+					<div class="d-flex">
+						<v-chip v-if="workInfo.status == enums.workStatus.completed" 
+							color="teal" text-color="white"  size="small">
+							Đã hoàn thành
+						</v-chip>
+						<v-chip v-else-if="workInfo.status == enums.workStatus.new" 
+							color="blue-darken-2" text-color="white"  size="small">
+							Mới
+						</v-chip>
+						<v-chip v-if="workInfo.status == enums.workStatus.inProgress" 
+							color="primary" text-color="white"  size="small">
+							Đã giao 
+						</v-chip>
+						<v-menu>
+							<template v-slot:activator="{ props }">
+								<v-btn class="menu-btn" variant="plain" icon="mdi-dots-vertical" v-bind="props"></v-btn>
+							</template>
+							<v-list>
+								<v-list-item class="menu-item" @click="editWork(workInfo)">
+									<v-list-item-title>Sửa</v-list-item-title>
+								</v-list-item>
+								<v-list-item class="menu-item" @click="deleteWork(workInfo)">
+									<v-list-item-title>Xoá
+									</v-list-item-title>
+								</v-list-item>
+							</v-list>
+						</v-menu>
+					</div>
+				</div>
+				<div v-if="workInfo.type != enums.workType.online && workInfo.location">
+					<v-icon icon="mdi-map-marker"></v-icon>
+					<span>{{ workInfo.location }}</span>
 				</div>
 				<div class="text-h5 mb-1">
 					<router-link :to="{name: 'postDetail', params: {workId: workInfo.id}}">
