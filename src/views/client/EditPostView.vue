@@ -46,6 +46,14 @@
                             v-model="jobInfo.description"
                             >
                         </v-textarea>
+                        <div v-if="attachments && attachments.length">
+                            <v-label>Tệp đính kèm</v-label>
+                            <div v-for="file in attachments" class="d-flex justify-space-between">
+                                <a :href="file.href" :download="file.fileName">{{ file.fileName }}</a>
+                                <v-icon icon="mdi-delete" class="delete-icon" title="Xoá tệp" @click="removeFile(file)"></v-icon>
+                            </div>
+                        </div>
+                        <v-file-input class="mt-2" label="Thêm đính kèm" multiple v-model="addedFiles" prepend-icon="" append-icon="mdi-paperclip"></v-file-input>
                         <br>
 
                         <v-btn :loading="loading" block color="success" size="large" type="submit"
@@ -65,9 +73,13 @@ import skillList from '@/constants/skillList.js'
 import workApi from '@/apis/workApi.js'
 import { useAuthStore } from '@/stores/authStore';
 import { useCommonUltilities } from '@/services/commonUlti'
+import { useAttachments } from '@/services/useAttachment';
 
 const { route, router, toast, enums } = useCommonUltilities()
 const authStore = useAuthStore()
+
+const { attachments, getFileKey, removeFile, confirmDeleteFile,
+        addedFiles, uploadAll } = useAttachments()
 
 const skills = ref(skillList)
 const loading = ref(false)
@@ -79,6 +91,7 @@ const getJobById = async (jobId) => {
     if (res && res.status == 200) {
         jobInfo.value = res.data
         jobInfo.value.fieldTagList = JSON.parse(res.data.fieldTag)
+        getFileKey(jobInfo.value.id, enums.refType.JD)
     }
 }
 getJobById(route.query.id)
@@ -89,11 +102,8 @@ const requiredRule = ref([
 
 const onSubmit = async () => {
     if (!form.value) return
-    // if (jobInfo.value.userType == 1 && jobInfo.value.skillList) {
-    //     jobInfo.value.skills = JSON.stringify(jobInfo.value.skillList)
-    // } else {
-    //     jobInfo.value.skills = JSON.stringify([])
-    // }
+    confirmDeleteFile()
+    uploadAll('jd', jobInfo.value.id, enums.refType.JD)
     jobInfo.value.fieldTag = JSON.stringify(jobInfo.value.fieldTagList)
 
     loading.value = true

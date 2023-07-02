@@ -28,7 +28,7 @@
                     </div>
 
                 </div>
-
+                <v-file-input label="Tệp đính kèm" multiple v-model="addedFiles" prepend-icon="" append-icon="mdi-paperclip"></v-file-input>
                 <v-btn :disabled="!form" :loading="loading" class="mt-3" color="success" size="large" type="submit"
                     variant="elevated">
                     Gửi hợp đồng
@@ -44,6 +44,8 @@ import proposalApi from '@/apis/proposalApi';
 import contractApi from '@/apis/contractApi';
 import { useAuthStore } from '@/stores/authStore';
 import workApi from '@/apis/workApi';
+import attachmentApi from '@/apis/attachmentApi';
+import { useAttachments } from '@/services/useAttachment';
 
 const { enums, router, toast, route } = useCommonUltilities()
 const authStore = useAuthStore()
@@ -74,9 +76,11 @@ const getWorkInfo = async (workId) => {
     return {}
 }
 
+const { addedFiles, uploadAll } = useAttachments()
 
 const onSubmit = async () => {
     if (!form.value) return
+    contract.value.id = crypto.randomUUID()
     contract.value.contractName = workInfo.value.title
     contract.value.proposalId = proposalId
     contract.value.workId = proposal.value.workId
@@ -89,6 +93,7 @@ const onSubmit = async () => {
     loading.value = false
     if (res && res.status === 200) {
         // thanh cong
+        uploadAll('contract', contract.value.id, enums.refType.contract)
         toast.success('Gửi hợp đồng thành công')
         await router.push({ name: 'clientView' })
     } else {

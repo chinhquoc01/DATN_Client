@@ -48,6 +48,7 @@
                             v-model="jobInfo.description"
                             >
                         </v-textarea>
+                        <v-file-input label="Tệp đính kèm" multiple v-model="addedFiles" prepend-icon="" append-icon="mdi-paperclip"></v-file-input>
                         <br>
 
                         <v-btn :disabled="!form" :loading="loading" block color="success" size="large" type="submit"
@@ -65,14 +66,17 @@
 import { ref } from 'vue'
 import skillList from '@/constants/skillList.js'
 import workApi from '@/apis/workApi.js'
+import attachmentApi from '@/apis/attachmentApi';
 import { useAuthStore } from '@/stores/authStore';
 import { useCommonUltilities } from '@/services/commonUlti'
+import { useAttachments } from '@/services/useAttachment';
 
 const { enums, router, toast } = useCommonUltilities()
 const authStore = useAuthStore()
 const skills = ref(skillList)
 const loading = ref(false)
 const form = ref(false)
+
 
 const jobInfo = ref({type: 0, budgetType: 0})
 const showAlert = ref(false)
@@ -82,14 +86,12 @@ const requiredRule = ref([
     v => !!v || 'Thông tin không được bỏ trống'
 ])
 
+const { addedFiles, uploadAll } = useAttachments()
 const onSubmit = async () => {
     if (!form.value) return
-    // if (jobInfo.value.userType == 1 && jobInfo.value.skillList) {
-    //     jobInfo.value.skills = JSON.stringify(jobInfo.value.skillList)
-    // } else {
-    //     jobInfo.value.skills = JSON.stringify([])
-    // }
+
     showAlert.value = false
+    jobInfo.value.id = crypto.randomUUID()
     jobInfo.value.clientId = authStore.userInfo.id
     jobInfo.value.fieldTag = JSON.stringify(jobInfo.value.fieldTagList)
     jobInfo.value.status = enums.workStatus.new
@@ -99,6 +101,8 @@ const onSubmit = async () => {
     loading.value = false
     if (res && res.status === 200) {
         // thanh cong
+        uploadAll('jd', jobInfo.value.id, enums.refType.JD)
+
         toast.success('Thêm công việc thành công')
         showAlert.value = false
         await router.push({ name: 'clientView' })

@@ -27,7 +27,7 @@
         </v-app-bar-title>
         <v-btn v-if="!authStore.loggedIn" class="" :to="{ name: 'login' }">Đăng nhập</v-btn>
         <v-btn v-if="!authStore.loggedIn" class="" color="primary" :to="{ name: 'signup' }">Đăng ký</v-btn>
-        <v-avatar v-if="authStore.loggedIn">
+        <v-avatar v-if="authStore.loggedIn" class="avatar">
             <v-img :src="authStore.userInfo.avatar || `https://ui-avatars.com/api/?name=${authStore.userInfo.name}`">
                 <v-menu activator="parent">
                     <v-card>
@@ -100,5 +100,8 @@ const signOut = () => {
 .nav-item {
     cursor: pointer;
 
+}
+.avatar {
+    cursor: pointer;
 }
 </style>

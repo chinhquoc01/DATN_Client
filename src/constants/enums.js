@@ -27,5 +27,11 @@ export default {
         valid: 1,
         expired: 2,
         rejected: 3
+    },
+    refType: {
+        JD: 0,
+        proposal: 1,
+        workProgress: 2,
+        contract: 3
     }
 }

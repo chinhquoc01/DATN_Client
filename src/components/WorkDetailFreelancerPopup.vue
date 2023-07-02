@@ -27,7 +27,6 @@
                             :min="0"
                             :step="1"
                             hide-details
-                            @update:model-value="updateProgress"
                         ></v-slider>
                         <div class="d-flex">
                             <div class="title-col">Loại công việc:</div>
@@ -49,8 +48,19 @@
                             <div class="title-col">Ngày kết thúc:</div>
                             <div>{{ workDetail.endDate }}</div>
                         </div>
+                        <div v-if="attachments && attachments.length" class="d-flex">
+                            <div class="title-col">Tệp đính kèm:</div>
+                            <div>
+                                <div v-for="file in attachments" class="d-flex align-center">
+                                    <a :href="file.href" :download="file.fileName">{{ file.fileName }}</a>
+                                    <v-icon icon="mdi-delete" class="delete-icon" title="Xoá tệp" @click="removeFile(file)"></v-icon>
+                                </div>
+                            </div>
+                        </div>
+                        <v-file-input label="Tệp đính kèm" multiple v-model="addedFiles" prepend-icon="" append-icon="mdi-paperclip"></v-file-input>
                     </v-card-text>
                 </v-card>
+                <v-btn color="primary" @click="save" block>Lưu</v-btn>
                 <div></div>
             </div>
         </v-card>
@@ -61,7 +71,9 @@ import enums from '@/constants/enums';
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
 import { useCommonUltilities } from '@/services/commonUlti';
+import { useAttachments } from '@/services/useAttachment';
 import workApi from '@/apis/workApi'
+import attachmentApi from '@/apis/attachmentApi';
 
 const {toast, router} = useCommonUltilities()
 const authStore = useAuthStore()
@@ -84,16 +96,27 @@ const close = () => {
     emit('close')
 }
 
-let timeOut = null
-const updateProgress = (progress) => {
-    clearTimeout(timeOut)
-    timeOut = setTimeout(async () => {
-        let intProgress = Math.round(progress)
-        let res = await workApi.updateProgress(props.workDetail.id, intProgress)
-        if (res && res.status == 200) {
-            toast.success('Cập nhật tiến độ thành công.')
-        }
-    }, 500);
+const { attachments, getFileKey, removeFile, confirmDeleteFile,
+        addedFiles, uploadAll } = useAttachments()
+
+const getAttachments = () => {
+    attachments.value = []
+    getFileKey(props.workDetail.id, enums.refType.workProgress)
+}
+
+defineExpose({
+    getAttachments
+})
+
+const save = async () => {
+    confirmDeleteFile()
+    await uploadAll('workProgress', props.workDetail.id, enums.refType.workProgress)
+    addedFiles.value = []
+    let res = await workApi.updateProgress(props.workDetail.id, props.workDetail.progress)
+    if (res && res.status == 200) {
+        toast.success('Cập nhật tiến độ thành công.')
+        close()
+    }
 }
 
 const getProposalStatus = (statusCode) => {
@@ -133,6 +156,9 @@ const getWorkType = (workType) => {
     margin-bottom: 8px;
 }
 .title-col {
-    width: 150px;
+    min-width: 150px;
+}
+.delete-icon {
+    cursor: pointer;
 }
 </style>

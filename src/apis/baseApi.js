@@ -56,6 +56,18 @@ export class BaseApi {
         }
     }
 
+    async getFile(url) {
+        try {
+            let response = await axios.get(url, {
+                responseType: 'blob'
+            })
+            return this.handleResponse(response)
+
+        } catch (error) {
+            return this.handleError(error)
+        }
+    }
+
     async post(url, param) {
         try {
             let response = await axios.post(url, param, this.config)

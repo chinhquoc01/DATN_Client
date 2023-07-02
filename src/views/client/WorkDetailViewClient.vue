@@ -3,6 +3,9 @@
         <v-col sm="8" md="6">
             <div>
                 work info
+                <div v-for="file in attachments">
+                    <a :href="file.href" :download="file.fileName">{{ file.fileName }}</a>
+                </div>
             </div>
             <div id="proposal-section">
                 <div v-if="proposalList && proposalList.length > 0">
@@ -57,8 +60,12 @@ import { ref } from 'vue'
 import { useCommonUltilities } from '@/services/commonUlti'
 import workApi from '@/apis/workApi';
 import proposalApi from '@/apis/proposalApi'
+import attachmentApi from '@/apis/attachmentApi';
+import { useAttachments } from '@/services/useAttachment';
 
 const { route, toast, router, enums } = useCommonUltilities()
+
+const {attachments, getFileKey, confirmDeleteFile, removeFile} = useAttachments()
 
 const workId = route.params.workId
 const workInfo = ref({})
@@ -66,6 +73,7 @@ const getWorkInfo = async () => {
     let res = await workApi.getById(workId)
     if (res && res.status == 200) {
         workInfo.value = res.data
+        getFileKey(workInfo.value.id, enums.refType.JD)
     }
 }
 getWorkInfo()

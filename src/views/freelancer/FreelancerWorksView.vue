@@ -15,6 +15,7 @@
         </v-col>
     </div>
     <work-detail-freelancer-popup
+        ref="popup"
         :work-detail="workDetail"
         :is-show="isShow"
         @close="isShow = false">
@@ -24,10 +25,12 @@
 <script setup>
 import WorkCardFreelancer from '@/components/WorkCardFreelancer.vue';
 import WorkDetailFreelancerPopup from '@/components/WorkDetailFreelancerPopup.vue';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { useCommonUltilities } from '@/services/commonUlti'
 import { useAuthStore } from '@/stores/authStore';
 import workApi from '@/apis/workApi';
+
+const popup = ref(null)
 
 const { toast, router } = useCommonUltilities()
 const authStore = useAuthStore()
@@ -48,6 +51,8 @@ const viewDetail = async (workInfo) => {
     if (res && res.status == 200) {
         workDetail.value = res.data
         isShow.value = true
+        await nextTick()
+        popup.value.getAttachments()
     }
 }
 
