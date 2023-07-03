@@ -1,5 +1,5 @@
 import { BaseApi } from "./baseApi";
-
+import { useAuthStore } from "@/stores/authStore";
 class AttachmentApi extends BaseApi {
     constructor() {
         super('Attachments')
@@ -24,7 +24,8 @@ class AttachmentApi extends BaseApi {
     async uploadFile(file, prefix, refId, refType) {
         const formData = new FormData()
         formData.append('file', file)
-        let res = await this.post(this.API_URL + `/aws?prefix=${prefix}&refId=${refId}&refType=${refType}`, formData)
+        let createdBy = useAuthStore().userInfo.id
+        let res = await this.post(this.API_URL + `/aws?prefix=${prefix}&refId=${refId}&refType=${refType}&createdBy=${createdBy}`, formData)
         return res
     }
 

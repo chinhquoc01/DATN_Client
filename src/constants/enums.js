@@ -1,7 +1,6 @@
 export default {
     workStatus: {
         new: 0,
-        handOn: 1,
         inProgress: 2,
         completed: 3,
         cancel: 4,
@@ -32,6 +31,7 @@ export default {
         JD: 0,
         proposal: 1,
         workProgress: 2,
-        contract: 3
+        contract: 3,
+        avatar: 4
     }
 }

@@ -10,7 +10,7 @@
 							<span>{{ workInfo.location }}</span>
 						</div>
 					</div>
-					
+					<div v-html="getWorkStatus(workInfo.status)"></div>
 				</div>
 				<div class="d-flex justify-space-between">
 					<div class="text-h5 mb-1" @click="viewWorkDetail(workInfo)">
@@ -53,14 +53,29 @@ const emit = defineEmits(['editWork', 'removeWork', 'clickTitle'])
 
 const getWorkType = (workType) => {
 	switch (workType) {
-		case 0:
+		case enums.workType.online:
 			return 'Online'
-		case 1:
+		case enums.workType.offline:
 			return 'Offline'
-		case 2:
+		case enums.workType.hybrid:
 			return 'Hybrid'
 		default:
 			return ''
+	}
+}
+
+const getWorkStatus = (workStatus) => {
+	switch (workStatus) {
+		case enums.workStatus.new:
+			return '<span style="color: rgb(21, 131, 221);">Mới</span>'
+		case enums.workStatus.inProgress:
+			return '<span style="color: rgb(213 201 32);">Đang làm</span>'
+		case enums.workStatus.completed:
+			return '<span style="color: rgb(31 199 45);">Đã hoàn thành</span>'
+		case enums.workStatus.cancel:
+			return '<span style="color: rgb(21, 131, 221);">Đã huỷ</span>'
+		default:
+			return '';
 	}
 }
 

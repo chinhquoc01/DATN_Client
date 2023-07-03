@@ -15,8 +15,12 @@ class WorkApi extends BaseApi {
         return res
     }
 
-    async getByFreelancerId(freelancerId) {
-        let res = await this.get(this.API_URL+ `/freelancer?freelancerId=${freelancerId}`)
+    async getByFreelancerId(freelancerId, workStatus = null) {
+        let queryPath = `/freelancer?freelancerId=${freelancerId}`
+        if (workStatus !== null) {
+            queryPath += `&workStatus=${workStatus}`
+        }
+        let res = await this.get(this.API_URL+ queryPath)
         return res
     }
 
@@ -35,8 +39,12 @@ class WorkApi extends BaseApi {
         return res
     }
 
-    async getByClientId(clientId) {
-        let res = await this.get(this.API_URL + '/get-by-client-id?clientId=' + clientId)
+    async getByClientId(clientId, workStatus = null) {
+        let queryPath = `/get-by-client-id?clientId=${clientId}`
+        if (workStatus !== null) {
+            queryPath += `&workStatus=${workStatus}`
+        }
+        let res = await this.get(this.API_URL + queryPath)
         return res
     }
 
@@ -57,6 +65,11 @@ class WorkApi extends BaseApi {
 
     async updateProgress(workId, progress) {
         let res = await this.put(this.API_URL + `/update-progress?workId=${workId}&progress=${progress}`)
+        return res
+    }
+
+    async updateStatus(workId, workStatus) {
+        let res = await this.put(this.API_URL + `/update-status?workId=${workId}&workStatus=${workStatus}`)
         return res
     }
 }

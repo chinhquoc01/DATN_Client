@@ -17,7 +17,7 @@
                         <div class="d-flex">
                             <div class="title-col">Tiến độ:</div>
                             <div>{{ workDetail.progress }}%</div>
-                            <v-icon icon="mdi-pencil" class="ml-1" @click="toggleSlider"></v-icon>
+                            <v-icon icon="mdi-pencil" class="ml-1" @click="toggleSlider" v-if="workDetail.status != enums.workStatus.completed"></v-icon>
                         </div>
                         <v-slider
                             v-show="isShowSlider"
@@ -53,14 +53,14 @@
                             <div>
                                 <div v-for="file in attachments" class="d-flex align-center">
                                     <a :href="file.href" :download="file.fileName">{{ file.fileName }}</a>
-                                    <v-icon icon="mdi-delete" class="delete-icon" title="Xoá tệp" @click="removeFile(file)"></v-icon>
+                                    <v-icon v-if="workDetail.status != enums.workStatus.completed" icon="mdi-delete" class="delete-icon" title="Xoá tệp" @click="removeFile(file)"></v-icon>
                                 </div>
                             </div>
                         </div>
-                        <v-file-input label="Tệp đính kèm" multiple v-model="addedFiles" prepend-icon="" append-icon="mdi-paperclip"></v-file-input>
+                        <v-file-input v-if="workDetail.status != enums.workStatus.completed" label="Tệp đính kèm" multiple v-model="addedFiles" prepend-icon="" append-icon="mdi-paperclip"></v-file-input>
                     </v-card-text>
                 </v-card>
-                <v-btn color="primary" @click="save" block>Lưu</v-btn>
+                <v-btn color="primary" :disabled="workDetail.status == enums.workStatus.completed" @click="save" block>Lưu</v-btn>
                 <div></div>
             </div>
         </v-card>
@@ -73,7 +73,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCommonUltilities } from '@/services/commonUlti';
 import { useAttachments } from '@/services/useAttachment';
 import workApi from '@/apis/workApi'
-import attachmentApi from '@/apis/attachmentApi';
 
 const {toast, router} = useCommonUltilities()
 const authStore = useAuthStore()
