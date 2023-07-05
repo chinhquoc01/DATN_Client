@@ -15,6 +15,16 @@ class UserApi extends BaseApi {
         let res = await this.get(this.API_URL + `/${userId}`)
         return res
     }
+
+    async updateUserInfo(userId, userInfo) {
+        let res = await this.put(this.API_URL + `/${userId}`, userInfo)
+        return res
+    }
+
+    async rateUser(userId, ratePoint) {
+        let res = await this.put(this.API_URL + `/rate?userId=${userId}&ratePoint=${ratePoint}`)
+        return res
+    }
 }
 
 export default new UserApi()

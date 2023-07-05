@@ -38,7 +38,11 @@ const router = createRouter({
 			name: '403',
 			component: () => import('../views/system/403.vue')
 		},
-		
+		{
+			path: '/update-profile',
+			name: 'updateProfile',
+			component: () => import('../views/EditUserInfo.vue')
+		},
 		{
 			path: '/client',
 			children: [
@@ -130,7 +134,7 @@ router.beforeEach(async (to) => {
 		authStore.returnUrl = to.fullPath;
 		return '/login';
 	}
-	if ((isClientPage && !authStore.isClient()) || (isFreelancerPage && !authStore.isFreelancer())) {
+	if ((authRequired && isClientPage && !authStore.isClient()) || (authRequired && isFreelancerPage && !authStore.isFreelancer())) {
 		return '/403'
 	}
 });

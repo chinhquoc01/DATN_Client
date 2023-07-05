@@ -32,6 +32,7 @@ export default {
         proposal: 1,
         workProgress: 2,
         contract: 3,
-        avatar: 4
+        avatar: 4,
+        userInfo: 5
     }
 }

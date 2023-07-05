@@ -102,8 +102,8 @@
                                 <div class="d-flex justify-end">
                                     <v-btn v-if="workInfo.status != enums.workStatus.completed" color="success" :disabled="workProgress.progress !== 100"
                                         :title="workProgress.progress == 100 ? '' : 'Tiến độ công việc cần đạt 100%'"
-                                        @click="confirmComplete">Xác nhận hoàn thành</v-btn>
-                                    <v-btn color="success" disabled>Đã hoàn thành</v-btn>
+                                        @click="isShowDialog = true">Xác nhận hoàn thành</v-btn>
+                                    <v-btn v-else color="success" disabled>Đã hoàn thành</v-btn>
                                 </div>
                             </div>
                             <div v-else>Công việc chưa được bàn giao</div>
@@ -113,20 +113,39 @@
             </div>
         </v-col>
     </div>
+    <dialog-popup 
+		v-model:is-show="isShowDialog"
+		:title="'Hoàn thành công việc'"
+		:content="'Bạn có chắc chắn muốn xác nhận hoàn thành công việc này không?'"
+		:confirm-text="'Xác nhận'"
+        @confirm="confirmComplete"
+	></dialog-popup>
+    <rating-popup
+        v-model:is-show="isShowRating"
+        :user-info="freelancerInfo"
+        >
+
+    </rating-popup>
 </template>
 
 <script setup>
+import DialogPopup from '@/components/DialogPopup.vue';
+import RatingPopup from '@/components/RatingPopup.vue';
 import { ref } from 'vue'
 import { useCommonUltilities } from '@/services/commonUlti'
 import workApi from '@/apis/workApi';
 import proposalApi from '@/apis/proposalApi'
 import attachmentApi from '@/apis/attachmentApi';
 import { useAttachments } from '@/services/useAttachment';
+import userApi from '@/apis/userApi';
 
 const { route, toast, router, enums } = useCommonUltilities()
 
 const {attachments, getFileKey, confirmDeleteFile, removeFile} = useAttachments()
 const tab = ref(null)
+
+const isShowDialog = ref(false)
+const isShowRating = ref(false)
 
 const workId = route.params.workId
 const workInfo = ref({})
@@ -138,6 +157,7 @@ const getWorkInfo = async () => {
         if (workInfo.value.freelancerId && workInfo.value.freelancerId != '00000000-0000-0000-0000-00000000') {
             getProgress(workInfo.value)
             getProgressAttach(workInfo.value.id)
+            getFreelancerId(workInfo.value.freelancerId)
         }
     }
 }
@@ -202,10 +222,21 @@ const getAttachment = async (fileName) => {
 }
 
 const confirmComplete = async () => {
+    isShowDialog.value = false
     let res = await workApi.updateStatus(workInfo.value.id, enums.workStatus.completed)
     if (res && res.status == 200) {
         workInfo.value.status = enums.workStatus.completed
         toast.success('Cập nhật trạng thái thành công')
+        isShowRating.value = true
+        
+    }
+}
+
+const freelancerInfo = ref({})
+const getFreelancerId = async (freelancerId) => {
+    let res = await userApi.getUserById(freelancerId)
+    if (res && res.status == 200) {
+        freelancerInfo.value = res.data
     }
 }
 </script>

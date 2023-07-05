@@ -41,7 +41,7 @@
                                     {{ authStore.userInfo.email }}
                                 </p>
                                 <v-divider class="my-3"></v-divider>
-                                <v-btn rounded variant="text">
+                                <v-btn rounded variant="text" :to="{name: 'updateProfile' }">
                                     Edit Account
                                 </v-btn>
                                 <v-divider class="my-3"></v-divider>
