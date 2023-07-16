@@ -2,11 +2,11 @@
     <div class="d-flex w-100 align-items-center justify-center">
         <v-col sm="8" md="5">
             <div v-for="(contract, index) in contractList" :key="index">
-                <v-card style="color: rgb(127, 138, 131);" class="mx-auto" max-width="344" variant="outlined">
+                <v-card style="color: rgb(127, 138, 131);" class="mx-auto" max-width="400" variant="outlined">
                     <v-card-item>
                         <div v-html="getProposalStatus(contract.status)"></div>
-                        <div @click="showContractDetail(contract)">{{ contract.contractName }}</div>
-                        <div>{{ contract.budget }}</div>
+                        <a style="cursor: pointer;" @click="showContractDetail(contract.id)">{{ contract.contractName }}</a>
+                        <div>{{ formatCurrency(contract.budget) }}</div>
                         <div>{{ contract.startDate }}</div>
                         <div>{{ contract.endDate }}</div>
                     </v-card-item>
@@ -27,28 +27,35 @@ import ContractDetailPopup from '@/components/ContractDetailPopup.vue';
 import contractApi from '@/apis/contractApi';
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
+import { useCommonUltilities } from '@/services/commonUlti';
 import enums from '@/constants/enums';
 const showPopup = ref(false)
 
+const { route } = useCommonUltilities()
 const authStore = useAuthStore()
 const contractList = ref([])
 const getContractList = async () => {
     let res = await contractApi.getContractByFreelancerId(authStore.userInfo.id)
     if (res && res.status == 200) {
         contractList.value = res.data
+        
     }
 }
 
 getContractList()
 
 const contractDetail = ref({})
-const showContractDetail = async (contract) => {
-    let res = await contractApi.getContractDetail(contract.id)
+const showContractDetail = async (contractId) => {
+    let res = await contractApi.getContractDetail(contractId)
     if (res && res.status == 200) {
         contractDetail.value = res.data
         showPopup.value = true
 
     }
+}
+
+if (route.query.contractId) {
+    showContractDetail(route.query.contractId)
 }
 
 const getProposalStatus = (statusCode) => {

@@ -10,7 +10,7 @@
                     <template #proposal>
                         <v-divider></v-divider>
                         <div>Thư ngỏ: {{ work.proposalContent }}</div>
-                        <div>Thu nhập mong muốn: {{ work.expectedPrice }}</div>
+                        <div>Thu nhập mong muốn: {{ formatCurrency(work.expectedPrice) }}</div>
                     </template>
                 </work-card-freelancer>
             </div>

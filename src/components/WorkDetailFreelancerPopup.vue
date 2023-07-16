@@ -34,11 +34,11 @@
                         </div>
                         <div class="d-flex">
                             <div class="title-col">Thu nhập đề xuất:</div>
-                            <div>{{ workDetail.budget }} VND</div>
+                            <div>{{ formatCurrency(workDetail.budget) }}</div>
                         </div>
                         <div class="d-flex">
                             <div class="title-col">Thu nhập thoả thuận:</div>
-                            <div>{{ workDetail.expectedIncome }} VND</div>
+                            <div>{{ formatCurrency(workDetail.expectedIncome) }}</div>
                         </div>
                         <div class="d-flex">
                             <div class="title-col">Ngày bắt đầu:</div>

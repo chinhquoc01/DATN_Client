@@ -38,5 +38,10 @@ app.use(createPinia())
 app.use(router)
 app.use(vuetify)
 app.use(Toast, toastOptions);
+app.mixin({
+    methods: {
+        formatCurrency: money => money.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
+    }
+})
 
 app.mount('#app')

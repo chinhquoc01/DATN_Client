@@ -75,6 +75,7 @@ const onSubmit = async () => {
         userInfo.value.skills = JSON.stringify([])
     }
     loading.value = true
+    userInfo.value.id = crypto.randomUUID()
     let res = await authStore.signUp(userInfo.value)
     loading.value = false
     if (res && res.status === 200) {

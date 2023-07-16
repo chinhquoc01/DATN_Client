@@ -7,14 +7,7 @@
             <v-form v-model="form" @submit.prevent="onSubmit" validate-on="input">
                 <v-text-field v-model="contract.budget" :readonly="loading" type="number" class="mb-2"
                         clearable label="Ngân sách" suffix="VND"></v-text-field>
-
-                <v-radio-group v-model="contract.budgetType" inline>
-                    <template v-slot:label>
-                        <div>Cách tính công</div>
-                    </template>
-                    <v-radio label="Theo giờ" :value="0"></v-radio>
-                    <v-radio label="Theo công việc" :value="1"></v-radio>
-                </v-radio-group>
+                        
                 <div class="d-md-flex">
                     <div>
                         <label for="" class="v-label">
@@ -87,6 +80,7 @@ const onSubmit = async () => {
     contract.value.freelancerId = proposal.value.freelancerId
     contract.value.clientId = authStore.userInfo.id
     contract.value.status = enums.contractStatus.new
+    contract.value.budgetType = 1
     
     loading.value = true
     let res = await contractApi.newContract(contract.value)

@@ -2,14 +2,25 @@
     <div class="d-flex w-100 align-items-center justify-center">
         <v-col sm="8" md="5">
             Client view
-            <v-select
-                label="Select"
-                v-model="workStatus"
-                @update:modelValue="updateWorkFilter"
-                :items="workStatusList"
-                item-title="title"
-                item-value="value"
-            ></v-select>
+            <div>
+                <v-select
+                    label="Tình trạng công việc"
+                    v-model="workStatus"
+                    @update:model-value="updateWorkFilter"
+                    :items="workStatusList"
+                    item-title="title"
+                    item-value="value"
+                ></v-select>
+                <v-select
+                    label="Loại công việc"
+                    v-model="workType"
+                    :items="workTypeList"
+                    @update:model-value="updateWorkFilter"
+                    item-title="title"
+                    item-value="value"
+                ></v-select>
+
+            </div>
             <v-btn color="" size="large" :to="{name: 'newPost'}"
                 variant="elevated">
                 Đăng bài
@@ -58,13 +69,23 @@ const workStatusList = ref([
 const workStatus = ref(-1)
 const updateWorkFilter = (e) => {
     let workStatusValue = workStatus.value != -1 ? workStatus.value : null
-    getWorkListByClientId(workStatusValue)
+    let workTypeValue = workType.value != -1 ? workType.value : null
+    getWorkListByClientId(workStatusValue, workTypeValue)
 }
+
+const workTypeList = ref([
+    {title: 'Tất cả', value: -1},
+    {title: 'Offline', value: enums.workType.offline},
+    {title: 'Online', value: enums.workType.online},
+    {title: 'Hybrid', value: enums.workType.hybrid},
+])
+const workType = ref(-1)
+
 
 const workList = ref([])
 const clientId = authStore.userInfo.id
-const getWorkListByClientId = async (workStatus = null) => {
-    let res = await workApi.getByClientId(clientId, workStatus)
+const getWorkListByClientId = async (workStatus = null, workType = null) => {
+    let res = await workApi.getByClientId(clientId, workStatus, workType)
     if (res && (res.status == 200 || res.status == 204)) {
         workList.value = res.data
     }

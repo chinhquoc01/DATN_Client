@@ -21,7 +21,7 @@
 					</slot>
 				</div>
 				<div class="text-caption">{{ workInfo.description }}</div>
-				<div v-if="isSuggestWork"><v-icon icon="mdi-cash"></v-icon>{{ workInfo.budget }} VND</div>
+				<div v-if="isSuggestWork"><v-icon icon="mdi-cash"></v-icon>{{ formatCurrency(workInfo.budget) }}</div>
 				<v-chip-group>
 					<v-chip v-for="field in fieldTag">{{ field }}</v-chip>
 				</v-chip-group>

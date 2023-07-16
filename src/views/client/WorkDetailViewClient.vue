@@ -44,6 +44,9 @@
                                                         <v-btn v-else-if="proposal.status == enums.proposalStatus.negotiating" disabled color="success" rounded="xl" class="ml-2" size="small" variant="elevated">
                                                             Chờ xác nhận
                                                         </v-btn>
+                                                        <v-btn v-else-if="proposal.status == enums.proposalStatus.reject" disabled color="red" rounded="xl" class="ml-2" size="small" variant="elevated">
+                                                            Đã từ chối
+                                                        </v-btn>
                                                         <v-chip v-else-if="proposal.status == enums.proposalStatus.accept" 
                                                             color="teal"
                                                             text-color="white"
@@ -55,7 +58,15 @@
                                                 </div>
                                                 <div>{{ proposal.address }}</div>
                                                 <div>Thư ngỏ: {{ proposal.content }}</div>
-                                                <div>Thu nhập mong muốn: {{ proposal.price }} VND</div>
+                                                <div>Thu nhập mong muốn: {{ formatCurrency(proposal.price) }}</div>
+                                                <div v-if="proposal.attachments && proposal.attachments.length" class="d-flex">
+                                                    <div class="title-col">Tệp đính kèm:</div>
+                                                    <div>
+                                                        <div v-for="file in proposal.attachments" class="d-flex align-center">
+                                                            <a :href="file.href" :download="file.fileName">{{ file.fileName }}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <v-chip-group>
                                                     <v-chip v-for="field in JSON.parse(proposal.skills)">{{ field }}</v-chip>
                                                 </v-chip-group>
@@ -73,11 +84,11 @@
                             <div v-if="workProgress" class="work-progress">
                                 <div class="d-flex">
                                     <div class="title-col">Thu nhập đề xuất:</div>
-                                    <div>{{ workProgress.budget }} VND</div>
+                                    <div>{{ formatCurrency(workProgress.budget) }}</div>
                                 </div>
                                 <div class="d-flex">
                                     <div class="title-col">Thu nhập thoả thuận:</div>
-                                    <div>{{ workProgress.expectedIncome }} VND</div>
+                                    <div>{{ formatCurrency(workProgress.expectedIncome) }}</div>
                                 </div>
                                 <div class="d-flex">
                                     <div class="title-col">Ngày bắt đầu:</div>
@@ -154,7 +165,7 @@ const getWorkInfo = async () => {
     if (res && res.status == 200) {
         workInfo.value = res.data
         getFileKey(workInfo.value.id, enums.refType.JD)
-        if (workInfo.value.freelancerId && workInfo.value.freelancerId != '00000000-0000-0000-0000-00000000') {
+        if (workInfo.value.freelancerId && workInfo.value.freelancerId != '00000000-0000-0000-0000-000000000000') {
             getProgress(workInfo.value)
             getProgressAttach(workInfo.value.id)
             getFreelancerId(workInfo.value.freelancerId)
@@ -168,7 +179,21 @@ const getProposalList = async () => {
     let res = await proposalApi.getProposalByWork(workId)
     if (res && res.status == 200) {
         proposalList.value = res.data
+        getProposalAttachs(proposalList.value)
     } 
+}
+const getProposalAttachs = async (proposalList) => {
+    proposalList.forEach(async proposal => {
+        proposal.attachments = []
+        let res = await attachmentApi.getFileKeyByRef(proposal.id, enums.refType.proposal)
+        if (res && res.status == 200) {
+            let fileKeys = res.data
+            fileKeys.forEach(async fileKey => {
+                let fileObj = await getAttachment(fileKey)
+                proposal.attachments.push(fileObj)
+            });
+        }
+    });
 }
 getProposalList()
 
@@ -197,6 +222,7 @@ const getProgress = async (workInfo) => {
     if (res && res.status == 200) {
         workProgress.value = res.data
     }
+
 }
 
 const progressAttachments = ref([])
@@ -204,8 +230,9 @@ const getProgressAttach = async (refId) => {
     let res = await attachmentApi.getFileKeyByRef(refId, enums.refType.workProgress)
     if (res && res.status == 200) {
         let fileKeys = res.data
-        fileKeys.forEach(fileKey => {
-            getAttachment(fileKey)
+        fileKeys.forEach(async fileKey => {
+            let fileObj = await getAttachment(fileKey)
+            progressAttachments.value.push(fileObj)
         });
     }
 
@@ -217,7 +244,8 @@ const getAttachment = async (fileName) => {
             href: URL.createObjectURL(res.data),
             fileName: fileName
         }
-        progressAttachments.value.push(fileObj)
+        return fileObj
+        // progressAttachments.value.push(fileObj)
     }
 }
 

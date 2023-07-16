@@ -39,10 +39,13 @@ class WorkApi extends BaseApi {
         return res
     }
 
-    async getByClientId(clientId, workStatus = null) {
+    async getByClientId(clientId, workStatus = null, workType = null) {
         let queryPath = `/get-by-client-id?clientId=${clientId}`
         if (workStatus !== null) {
             queryPath += `&workStatus=${workStatus}`
+        }
+        if (workType !== null) {
+            queryPath += `&workType=${workType}`
         }
         let res = await this.get(this.API_URL + queryPath)
         return res
@@ -53,8 +56,13 @@ class WorkApi extends BaseApi {
         return res
     }
 
-    async getWorkForFreelancer(freelancerId, expectIncome, skillList) {
-        let res = await this.post(this.API_URL + `/suggest-for-freelancer?freelancerId=${freelancerId}&expectIncome=${expectIncome}`, skillList)
+    async getWorkForFreelancer(freelancerId, expectIncome, skillList, searchQuery, workType = null) {
+        if (searchQuery === null) searchQuery = ''
+        let queryPath = `/suggest-for-freelancer?freelancerId=${freelancerId}&expectIncome=${expectIncome}&searchQuery=${searchQuery}`
+        if (workType !== null) {
+            queryPath += `&workType=${workType}`
+        }
+        let res = await this.post(this.API_URL + queryPath, skillList)
         return res
     }
 
