@@ -8,7 +8,7 @@
             <!-- proposal form -->
             <v-form v-model="form" @submit.prevent="onSubmit" validate-on="input">
                 <v-text-field v-model="proposal.price" :readonly="loading" type="number" class="mb-2"
-                        clearable label="Ngân sách" suffix="VND"></v-text-field>
+                        clearable label="Thu nhập mong muốn" suffix="VND"></v-text-field>
 
                 <v-text-field v-model="proposal.content" :readonly="loading" :rules="requiredRule" class="mb-2"
                     clearable label="Lời ngỏ"></v-text-field>

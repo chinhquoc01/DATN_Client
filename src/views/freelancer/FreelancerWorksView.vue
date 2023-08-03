@@ -2,7 +2,7 @@
     <div class="d-flex w-100 align-items-center justify-center">
         <v-col sm="8" md="5">
             <v-select
-                label="Select"
+                label="Trạng thái"
                 v-model="workStatus"
                 @update:modelValue="updateWorkFilter"
                 :items="workStatusList"

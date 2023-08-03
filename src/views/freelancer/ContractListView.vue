@@ -6,9 +6,9 @@
                     <v-card-item>
                         <div v-html="getProposalStatus(contract.status)"></div>
                         <a style="cursor: pointer;" @click="showContractDetail(contract.id)">{{ contract.contractName }}</a>
-                        <div>{{ formatCurrency(contract.budget) }}</div>
-                        <div>{{ contract.startDate }}</div>
-                        <div>{{ contract.endDate }}</div>
+                        <div>Thu nhập thoả thuận: {{ formatCurrency(contract.budget) }}</div>
+                        <div>Ngày bắt đầu: {{ formatDate(contract.startDate) }}</div>
+                        <div>Ngày kết thúc: {{ formatDate(contract.endDate) }}</div>
                     </v-card-item>
                 </v-card>
             </div>

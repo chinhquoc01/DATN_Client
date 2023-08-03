@@ -22,7 +22,7 @@
                     class="rounded-circle h-75 mr-2 ml-2" alt="" srcset=""/>
                 <div>{{ receiverInfo.name }}</div>
             </div>
-            <div class="message-history">
+            <div id="message-history-id" class="message-history">
                 <div class="d-flex flex-column">
                     <div v-for="(message, index) in messageList" :key="index" class="message-group" :class="{'my-message-group': message.senderId == senderId, 'their-message-group': message.senderId == receiverId}">
                         <div class="message">
@@ -34,11 +34,11 @@
                     </div>
                 </div>
             </div>
-            <div v-if="receiverInfo" class="d-flex align-end chat-input">
+            <div v-if="receiverInfo" class="d-flex align-center chat-input">
                 <v-textarea v-model="messageText" class="" placeholder="Nhập tin nhắn" 
                     @keyup.enter.prevent="sendMessage" auto-grow rows="1"
                     variant="solo"></v-textarea>
-                <v-btn @click="sendMessage">Gửi</v-btn>
+                <v-btn density="comfortable" class="ml-4 mr-4" icon="mdi-send-variant" @click="sendMessage"></v-btn>
             </div>
     
 
@@ -46,13 +46,12 @@
     </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useCommonUltilities } from '@/services/commonUlti';
 import { useAuthStore } from '@/stores/authStore';
 import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr'
 import messageApi from '@/apis/messageApi';
 import userApi from '@/apis/userApi';
-import { nextTick } from 'vue';
 
 const { route } = useCommonUltilities()
 const authStore = useAuthStore()
@@ -73,7 +72,7 @@ const selectChat = async (user) => {
     receiverId.value = user.id
     messageList.value = await getChatHistory(senderId.value, receiverId.value)
     await nextTick()
-    scrollToBottom('chat-section-id')
+    scrollToBottom('message-history-id')
     if (channel.value) {
         connection.off(channel.value)
     }
@@ -108,7 +107,7 @@ const sendMessage = async () => {
             let workId = route.query.workId
             await connection.invoke("SendMessage", messageText.value, senderId.value, receiverId.value, workId)
             messageText.value = ''
-            scrollToBottom('chat-section-id')
+            scrollToBottom('message-history-id')
         }
         
     } catch (error) {
@@ -193,12 +192,13 @@ const handleDateTime = (isoDatetime) => {
 .chat-section {
     flex-grow: 1;
     min-width: 50%;
-    overflow: scroll;
+    overflow-x: hidden;
 }
 .divider {
     cursor: ew-resize;
 }
 .message-history {
+    overflow-y: scroll;
     flex-grow: 1;
     padding: 8px;
 }

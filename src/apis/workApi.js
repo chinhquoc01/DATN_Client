@@ -56,13 +56,9 @@ class WorkApi extends BaseApi {
         return res
     }
 
-    async getWorkForFreelancer(freelancerId, expectIncome, skillList, searchQuery, workType = null) {
-        if (searchQuery === null) searchQuery = ''
-        let queryPath = `/suggest-for-freelancer?freelancerId=${freelancerId}&expectIncome=${expectIncome}&searchQuery=${searchQuery}`
-        if (workType !== null) {
-            queryPath += `&workType=${workType}`
-        }
-        let res = await this.post(this.API_URL + queryPath, skillList)
+    async getWorkForFreelancer(freelancerId, workFilter) {
+        let queryPath = `/suggest-for-freelancer?freelancerId=${freelancerId}`
+        let res = await this.post(this.API_URL + queryPath, workFilter)
         return res
     }
 

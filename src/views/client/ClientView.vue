@@ -1,8 +1,19 @@
 <template>
     <div class="d-flex w-100 align-items-center justify-center">
-        <v-col sm="8" md="5">
-            Client view
-            <div>
+        <div class="d-flex flex-row w-100 justify-space-evenly">
+            <v-sheet class="pt-6 w-50" rounded>
+                <div v-if="workList && workList.length">
+                    <div v-for="work in workList">
+                        <work-card :work-info="work" class="mb-2"
+                            @editWork="editWork"
+                            @removeWork="popupRemoveWork">
+                        </work-card>
+                    </div>
+                </div>
+                <div v-else>Không có dữ liệu</div>
+            </v-sheet>
+
+            <v-card class="w-25 filter">
                 <v-select
                     label="Tình trạng công việc"
                     v-model="workStatus"
@@ -20,20 +31,11 @@
                     item-value="value"
                 ></v-select>
 
-            </div>
-            <v-btn color="" size="large" :to="{name: 'newPost'}"
-                variant="elevated">
-                Đăng bài
-            </v-btn>
-            <v-sheet class="pt-6 w-100" rounded>
-                <div v-for="work in workList">
-                    <work-card :work-info="work"
-                        @editWork="editWork"
-                        @removeWork="popupRemoveWork">
-                    </work-card>
-                </div>
-            </v-sheet>
-        </v-col>
+                <v-btn color="" size="large" :to="{name: 'newPost'}">
+                    Đăng bài
+                </v-btn>
+            </v-card>
+        </div>
     <dialog-popup 
 		v-model:is-show="isShowDialog"
 		:title="'Xoá công việc'"
@@ -115,3 +117,13 @@ const removeWork = async (workInfo) => {
     }
 }
 </script>
+
+
+<style scoped>
+.filter {
+    height: fit-content;
+    width: 300px;
+    top: 30px;
+    padding: 8px;
+}
+</style>

@@ -6,7 +6,7 @@
                 <div @click="clickHome" class="logo">Gigify</div>
                 <div v-if="authStore.loggedIn && authStore.isFreelancer()" class="nav-item ml-4">
                     Tìm việc
-                    <v-menu activator="parent" open-on-hover>
+                    <v-menu activator="parent" open-on-hover open-on-click>
                         <v-list>
                             <v-list-item @click="clickProposal">Ứng tuyển</v-list-item>
 
@@ -15,7 +15,7 @@
                 </div>
                 <div v-if="authStore.loggedIn && authStore.isFreelancer()" class="nav-item ml-4">
                     Công việc
-                    <v-menu activator="parent" open-on-hover>
+                    <v-menu activator="parent" open-on-hover open-on-click>
                         <v-list>
                             <v-list-item @click="clickMyJob">Việc của tôi</v-list-item>
                             <v-list-item @click="clickContracts">Hợp đồng</v-list-item>
@@ -42,12 +42,12 @@
                                 </p>
                                 <v-divider class="my-3"></v-divider>
                                 <v-btn rounded variant="text" :to="{name: 'updateProfile' }">
-                                    Edit Account
+                                    Chỉnh sửa hồ sơ
                                 </v-btn>
-                                <v-divider class="my-3"></v-divider>
+                                <!-- <v-divider class="my-3"></v-divider>
                                 <v-btn rounded variant="text">
                                     Disconnect
-                                </v-btn>
+                                </v-btn> -->
                             </div>
                         </v-card-text>
                     </v-card>

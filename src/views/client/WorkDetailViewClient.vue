@@ -8,7 +8,7 @@
                 align-tabs="center" 
                 >
                     <v-tab value="one">Mô tả</v-tab>
-                    <v-tab value="two">Ứng tuyển</v-tab>
+                    <v-tab value="two">Hồ sơ ứng tuyển</v-tab>
                     <v-tab value="three" >Tiến độ công việc</v-tab>
                 </v-tabs>
 
@@ -38,9 +38,14 @@
                                                         <v-btn color="success" rounded="xl" size="medium" class="pr-2 pl-2" variant="outlined" @click="message(proposal)">
                                                             Nhắn tin
                                                         </v-btn>
-                                                        <v-btn v-if="proposal.status == enums.proposalStatus.pending" color="success" rounded="xl" class="ml-2" size="small" variant="elevated" @click="accept(proposal)">
-                                                            Gửi hợp đồng
-                                                        </v-btn>
+                                                        <div v-if="proposal.status == enums.proposalStatus.pending">
+                                                            <v-btn color="red" rounded="xl" class="ml-2" size="small" variant="elevated" @click="reject(proposal)">
+                                                                Từ chối
+                                                            </v-btn>
+                                                            <v-btn color="success" rounded="xl" class="ml-2" size="small" variant="elevated" @click="accept(proposal)">
+                                                                Gửi hợp đồng
+                                                            </v-btn>
+                                                        </div>
                                                         <v-btn v-else-if="proposal.status == enums.proposalStatus.negotiating" disabled color="success" rounded="xl" class="ml-2" size="small" variant="elevated">
                                                             Chờ xác nhận
                                                         </v-btn>
@@ -92,11 +97,11 @@
                                 </div>
                                 <div class="d-flex">
                                     <div class="title-col">Ngày bắt đầu:</div>
-                                    <div>{{ workProgress.startDate }}</div>
+                                    <div>{{ formatDate(workProgress.startDate) }}</div>
                                 </div>
                                 <div class="d-flex">
                                     <div class="title-col">Ngày kết thúc:</div>
-                                    <div>{{ workProgress.endDate }}</div>
+                                    <div>{{ formatDate(workProgress.endDate) }}</div>
                                 </div>
                                 <div class="d-flex">
                                     <div class="title-col">Tiến độ:</div>
@@ -134,6 +139,7 @@
     <rating-popup
         v-model:is-show="isShowRating"
         :user-info="freelancerInfo"
+        :work-id="workId"
         >
 
     </rating-popup>

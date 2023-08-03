@@ -30,6 +30,7 @@
                         </v-radio-group>
 
                         <div v-if="userInfo.userType == enums.userType.freelancer">
+                            <v-combobox v-model="userInfo.workerType" :items="workerTypes" label="Lĩnh vực làm việc"></v-combobox>
                             <v-text-field v-model="userInfo.jobTitle" :readonly="loading" :rules="[required]" class="mb-2"
                                 clearable label="Chức danh"></v-text-field>
                             <v-text-field v-model="userInfo.description" :readonly="loading" :rules="[required]"
@@ -57,11 +58,13 @@ import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'vue-router';
 import skillList from '@/constants/skillList.js'
 import enums from '@/constants/enums';
+import workerType from '@/constants/workerType.js'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const userInfo = ref({})
 const items = ref(skillList)
+const workerTypes = ref(workerType)
 const loading = ref(false)
 const form = ref(false)
 const showAlert = ref(false)

@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="props.isShow" width="auto" persistent class="">
 
-        <v-card>
+        <v-card class="pa-4">
             <v-card-title>
                 Đánh giá {{ getUserType(userInfo) }}
             </v-card-title>
@@ -19,6 +19,7 @@
                 bg-color="orange-lighten-1"
                 color="blue"
             ></v-rating>
+            <v-text-field placeholder="Nhập nội dung" v-model="content" required></v-text-field>
             <v-card-actions class="justify-end">
                 <v-btn color="primary" @click="closeDialog">Đóng</v-btn>
                 <v-btn color="primary" @click="confirm">Đánh giá</v-btn>
@@ -29,18 +30,21 @@
 </template>
 
 <script setup>
-import userApi from '@/apis/userApi';
+import reviewApi from '@/apis/reviewApi';
 import enums from '@/constants/enums';
 import { useCommonUltilities } from '@/services/commonUlti';
 import { ref } from 'vue';
+import { useAuthStore } from '@/stores/authStore';
 
+const authStore = useAuthStore()
 const { toast, router } = useCommonUltilities()
 const props = defineProps({
     userInfo: Object,
     isShow: {
         type: Boolean,
         default: false
-    }
+    },
+    workId: String
 })
 const emit = defineEmits(['update:isShow'])
 
@@ -49,9 +53,22 @@ const closeDialog = () => {
 }
 
 const rating = ref(3)
+const content = ref('')
 const confirm = async () => {
     if (rating.value && rating.value !== 0) {
-        let res = await userApi.rateUser(props.userInfo.id, rating.value)
+        if (!content.value) {
+            toast.warning('Vui lòng nhập nội dung đánh giá')
+            return
+        }
+        let review = {
+            id: crypto.randomUUID(),
+            reviewerId: authStore.userInfo.id,
+            revieweeId: props.userInfo.id,
+            content: content.value,
+            star: rating.value,
+            workId: props.workId
+        }
+        let res = await reviewApi.addReview(review)
         if (res && res.status == 200) {
             closeDialog()
             toast.success('Đánh giá người dùng thành công')

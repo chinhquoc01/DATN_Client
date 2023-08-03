@@ -1,25 +1,44 @@
 <template>
     <div class="d-flex w-100 align-items-center justify-center">
-        <v-col sm="8" md="5">
-            Freelacner view
-            <div>
+        <div class="d-flex flex-row w-100 justify-space-evenly mt-6">
+            <v-sheet class="w-50">
+                <div v-if="workList && workList.length">
+                    <div v-for="work in workList">
+                        <work-card-freelancer :work-info="work" class="mb-2">
+                        </work-card-freelancer>
+                    </div>
+                </div>
+                <div v-else>Không có dữ liệu</div>
+            </v-sheet>
+            <v-card class="w-25 filter">
                 <v-select
                     label="Loại công việc"
-                    v-model="workType"
+                    v-model="filter.type"
                     :items="workTypeList"
-                    @update:model-value="updateWorkFilter"
                     item-title="title"
                     item-value="value"
                 ></v-select>
-                <v-text-field v-model="searchQuery" placeholder="Tìm kiếm" 
-                    @keyup.enter.prevent="updateWorkFilter"></v-text-field>
+                <div>Khoảng thu nhập</div>
+                <div class="d-flex">
+                    <v-text-field v-model="minRange" class="max-range" type="number"></v-text-field>
+                    <v-range-slider
+                        v-model="filter.range"
+                        :max="maxRange"
+                        :min="minRange"
+                        :step="1000"
+                        thumb-label="always"
+                    ></v-range-slider>
+                    <v-text-field v-model="maxRange" class="max-range" type="number"></v-text-field>
+                </div>
+                <v-combobox v-model="filter.skillList" :items="skills" label="Kỹ năng công việc" multiple
+                    chips></v-combobox>
+                <v-text-field v-model="filter.searchQuery" 
+                    placeholder="Tìm kiếm theo công việc, địa chỉ">
+                </v-text-field>
 
-            </div>
-            <div v-for="work in workList">
-                <work-card-freelancer :work-info="work">
-                </work-card-freelancer>
-            </div>
-        </v-col>
+                <v-btn @click="updateWorkFilter">Lọc</v-btn>
+            </v-card>
+        </div>
     </div>
 </template>
 
@@ -29,13 +48,21 @@ import { ref } from 'vue';
 import { useCommonUltilities } from '@/services/commonUlti'
 import { useAuthStore } from '@/stores/authStore';
 import workApi from '@/apis/workApi';
+import skillList from '@/constants/skillList.js'
 
+const skills = ref(skillList)
 const { toast, router, enums } = useCommonUltilities()
 const authStore = useAuthStore()
 const workList = ref([])
-const getSuggestWork = async (searchQuery = '', workType = null) => {
-    let skillList = JSON.parse(authStore.userInfo.skills) ?? []
-    let res = await workApi.getWorkForFreelancer(authStore.userInfo.id, authStore.userInfo.hourlyRate, skillList, searchQuery, workType)
+const getSuggestWork = async (workFilter = null) => {
+    if (!workFilter) {
+        workFilter = {}
+        workFilter.skillList = JSON.parse(authStore.userInfo.skills) ?? []
+        workFilter.searchQuery = ''
+        workFilter.type = -1
+        workFilter.range = []
+    }
+    let res = await workApi.getWorkForFreelancer(authStore.userInfo.id, workFilter)
     if (res && (res.status == 200 || res.status == 204)) {
         workList.value = res.data
     }
@@ -48,15 +75,34 @@ const workTypeList = ref([
     {title: 'Online', value: enums.workType.online},
     {title: 'Hybrid', value: enums.workType.hybrid},
 ])
-const workType = ref(-1)
-const searchQuery = ref('')
-
 const updateWorkFilter = () => {
-    let workTypeValue = workType.value != -1 ? workType.value : null
-    if (searchQuery.value) {
-        searchQuery.value = searchQuery.value.replace(/(\r\n|\n|\r)/gm, "")
-    }
-    getSuggestWork(searchQuery.value, workTypeValue)
+    console.log(filter.value);
+    // let workTypeValue = workType.value != -1 ? workType.value : null
+    // if (searchQuery.value) {
+    //     searchQuery.value = searchQuery.value.replace(/(\r\n|\n|\r)/gm, "")
+    // }
+    getSuggestWork(filter.value)
 }
 
+const maxRange = ref(9999999)
+const minRange = ref(10000)
+
+const filter = ref({
+    type: -1,
+    searchQuery: '',
+    range: [],
+    skillList: []
+})
+
 </script>
+
+<style scoped>
+.filter {
+    height: fit-content;
+    width: 300px;
+    padding: 8px;
+}
+.max-range {
+    max-width: 100px;
+}
+</style>

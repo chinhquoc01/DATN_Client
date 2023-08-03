@@ -40,7 +40,8 @@ app.use(vuetify)
 app.use(Toast, toastOptions);
 app.mixin({
     methods: {
-        formatCurrency: money => money.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
+        formatCurrency: money => money.toLocaleString('it-IT', {style : 'currency', currency : 'VND'}),
+        formatDate: date => new Date(date).toLocaleString('vi-VN')
     }
 })
 

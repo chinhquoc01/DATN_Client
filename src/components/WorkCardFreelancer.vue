@@ -1,5 +1,5 @@
 <template>
-	<v-card class="mx-auto" max-width="644" variant="outlined">
+	<v-card class="mx-auto" max-width="644">
 		<v-card-item>
 			<div>
 				<div class="d-flex justify-space-between">

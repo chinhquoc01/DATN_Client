@@ -8,6 +8,10 @@
                         <div v-html="getProposalStatus(contractDetail.status)"></div>
                     </div>
                     <div class="d-flex">
+                        <div class="title-col">Tên hợp đồng:</div>
+                        <div>{{ contractDetail.contractName }}</div>
+                    </div>
+                    <div class="d-flex">
                         <div class="title-col">Tên công việc:</div>
                         <div>{{ contractDetail.jobTitle }}</div>
                     </div>
@@ -16,20 +20,16 @@
                         <div>{{ contractDetail.jobDescription }}</div>
                     </div>
                     <div class="d-flex">
-                        <div class="title-col">Chi tiết công việc:</div>
-                        <div>{{ contractDetail.jobTitle }}</div>
-                    </div>
-                    <div class="d-flex">
                         <div class="title-col">Thu nhập:</div>
-                        <div>{{ contractDetail.budget }}</div>
+                        <div>{{ formatCurrency(contractDetail.budget) }}</div>
                     </div>
                     <div class="d-flex">
                         <div class="title-col">Ngày bắt đầu:</div>
-                        <div>{{ contractDetail.startDate }}</div>
+                        <div>{{ formatDate(contractDetail.startDate) }}</div>
                     </div>
                     <div class="d-flex">
                         <div class="title-col">Ngày kết thúc:</div>
-                        <div>{{ contractDetail.endDate }}</div>
+                        <div>{{ formatDate(contractDetail.endDate) }}</div>
                     </div>
                 </div>
                 <v-divider vertical></v-divider>
