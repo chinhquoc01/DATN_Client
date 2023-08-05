@@ -1,31 +1,32 @@
 <template>
     <div class="d-flex w-100 align-items-center justify-center">
         <v-col sm="8" md="5">
-            <div>work detail</div>
+            <h2 class="mb-3 text-h5">Thông tin hợp đồng</h2>
 
             <!-- proposal form -->
             <v-form v-model="form" @submit.prevent="onSubmit" validate-on="input">
                 <v-text-field v-model="contract.budget" :readonly="loading" type="number" class="mb-2"
-                        clearable label="Ngân sách" suffix="VND"></v-text-field>
+                        clearable label="Thu nhập thoả thuận" suffix="VND"></v-text-field>
                         
-                <div class="d-md-flex">
+                <div class="d-md-flex mb-8">
                     <div>
-                        <label for="" class="v-label">
-                            Ngày bắt đầu
-                        </label>
+                        <label for="" class="v-label">Ngày bắt đầu</label>
                         <VueDatePicker v-model="contract.startDate"></VueDatePicker>
                     </div>
-                    <div>
+                    <div class="ml-2">
                         <label for="" class="v-label">Ngày kết thúc</label>
                         <VueDatePicker v-model="contract.endDate"></VueDatePicker>
                     </div>
 
                 </div>
                 <v-file-input label="Tệp đính kèm" multiple v-model="addedFiles" prepend-icon="" append-icon="mdi-paperclip"></v-file-input>
-                <v-btn :disabled="!form" :loading="loading" class="mt-3" color="success" size="large" type="submit"
-                    variant="elevated">
-                    Gửi hợp đồng
-                </v-btn>
+                <div class="d-flex justify-end">
+                    <v-btn :disabled="!form" :loading="loading" class="mt-3" color="success" size="large" type="submit"
+                        variant="elevated">
+                        Gửi hợp đồng
+                    </v-btn>
+
+                </div>
             </v-form>
         </v-col>
     </div>
@@ -80,7 +81,6 @@ const onSubmit = async () => {
     contract.value.freelancerId = proposal.value.freelancerId
     contract.value.clientId = authStore.userInfo.id
     contract.value.status = enums.contractStatus.new
-    contract.value.budgetType = 1
     
     loading.value = true
     let res = await contractApi.newContract(contract.value)

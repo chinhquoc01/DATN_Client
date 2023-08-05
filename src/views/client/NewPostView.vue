@@ -74,7 +74,7 @@ const loading = ref(false)
 const form = ref(false)
 
 
-const jobInfo = ref({type: 0, budgetType: 0})
+const jobInfo = ref({type: 0})
 const showAlert = ref(false)
 const errorMessage = ref('')
 
@@ -103,7 +103,7 @@ const onSubmit = async () => {
         showAlert.value = false
         await router.push({ name: 'clientView' })
     } else {
-        errorMessage.value = res.data.devMsg || res.data.userMsg
+        errorMessage.value = res.data.userMsg || res.data.userMsg
         showAlert.value = true
     }
 

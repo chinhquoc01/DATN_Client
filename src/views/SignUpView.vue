@@ -30,7 +30,7 @@
                         </v-radio-group>
 
                         <div v-if="userInfo.userType == enums.userType.freelancer">
-                            <v-combobox v-model="userInfo.workerType" :items="workerTypes" label="Lĩnh vực làm việc"></v-combobox>
+                            <v-combobox v-model="userInfo.workField" :items="workerTypes" label="Lĩnh vực làm việc"></v-combobox>
                             <v-text-field v-model="userInfo.jobTitle" :readonly="loading" :rules="[required]" class="mb-2"
                                 clearable label="Chức danh"></v-text-field>
                             <v-text-field v-model="userInfo.description" :readonly="loading" :rules="[required]"

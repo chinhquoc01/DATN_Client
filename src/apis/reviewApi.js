@@ -9,6 +9,11 @@ class ReviewApi extends BaseApi {
         let res = await this.post(this.API_URL, review)
         return res
     }
+
+    async getReviewHistory(userId) {
+        let res = await this.get(this.API_URL + `/history?userId=${userId}`)
+        return res
+    }
 }
 
 export default new ReviewApi()

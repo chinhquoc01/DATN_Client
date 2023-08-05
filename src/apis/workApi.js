@@ -76,6 +76,11 @@ class WorkApi extends BaseApi {
         let res = await this.put(this.API_URL + `/update-status?workId=${workId}&workStatus=${workStatus}`)
         return res
     }
+
+    async getWorkHistory(userId) {
+        let res = await this.get(this.API_URL + `/history?userId=${userId}`)
+        return res
+    }
 }
 
 export default new WorkApi()

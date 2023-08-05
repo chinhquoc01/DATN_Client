@@ -36,7 +36,10 @@
                     placeholder="Tìm kiếm theo công việc, địa chỉ">
                 </v-text-field>
 
-                <v-btn @click="updateWorkFilter">Lọc</v-btn>
+                <div class="d-flex justify-end ">
+                    <v-btn @click="updateWorkFilter" color="success">Lọc</v-btn>
+
+                </div>
             </v-card>
         </div>
     </div>
@@ -76,7 +79,6 @@ const workTypeList = ref([
     {title: 'Hybrid', value: enums.workType.hybrid},
 ])
 const updateWorkFilter = () => {
-    console.log(filter.value);
     // let workTypeValue = workType.value != -1 ? workType.value : null
     // if (searchQuery.value) {
     //     searchQuery.value = searchQuery.value.replace(/(\r\n|\n|\r)/gm, "")

@@ -35,18 +35,19 @@
                 <v-divider vertical></v-divider>
                 <div class="pl-4">
                     <div class="buttons d-flex flex-column">
-                        <v-btn v-if="contractDetail.status == enums.contractStatus.new" @click="approveContract">Chấp nhận</v-btn>
-                        <v-btn v-if="contractDetail.status == enums.contractStatus.new" @click="rejectContract">Từ chối</v-btn>
+                        <v-btn v-if="contractDetail.status == enums.contractStatus.new" color="success" @click="approveContract">Chấp nhận</v-btn>
+                        <v-btn v-if="contractDetail.status == enums.contractStatus.new" color="red" @click="rejectContract">Từ chối</v-btn>
                         <v-btn @click="close">Đóng</v-btn>
                     
                     </div>
                     <div class="client-info">
-                        <div class="d-flex">
-                            <div class="avatar-container">
+                        <div>Thông tin nhà tuyển dụng:</div>
+                        <div class="d-flex mt-2">
+                            <div class="avatar-container mr-3">
                                 <img :src="contractDetail.clientAvatar || `https://ui-avatars.com/api/?name=${contractDetail.clientName}`" class="rounded-circle" alt="" srcset=""/>
                             </div>
                             <div>
-                                <div>{{ contractDetail.clientName }}</div>
+                                <a :href="`/profile/${contractDetail.clientId}`" target="_blank">{{ contractDetail.clientName }}</a>
                                 <div>{{ contractDetail.clientAddress }}</div>
                             </div>
                         </div>

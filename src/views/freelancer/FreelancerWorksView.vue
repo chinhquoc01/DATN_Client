@@ -10,7 +10,7 @@
                 item-value="value"
             ></v-select>
             <div v-if="workList && workList.length">
-                <div v-for="work in workList">
+                <div v-for="work in workList" class="mt-3">
                     <work-card-freelancer :work-info="work"
                         :is-suggest-work="false"
                         @clickTitle="viewDetail">
@@ -80,6 +80,7 @@ const viewDetail = async (workInfo) => {
         isShow.value = true
         await nextTick()
         popup.value.getAttachments()
+        popup.value.getAttachmentWork()
     }
 }
 

@@ -35,7 +35,7 @@
                             <div class="mx-auto text-center">
                                 <h2>{{ authStore.userInfo.name }}</h2>
                                 <p class="text-caption mt-1">
-                                    {{ authStore.isClient() ? 'Khách hàng' : 'Freelancer' }}
+                                    {{ authStore.isClient() ? 'Người tuyển dụng' : 'Freelancer' }}
                                 </p>
                                 <p class="text-caption mt-1">
                                     {{ authStore.userInfo.email }}

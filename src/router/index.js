@@ -44,6 +44,11 @@ const router = createRouter({
 			component: () => import('../views/EditUserInfo.vue')
 		},
 		{
+			path: '/profile/:userId',
+			name: 'profile',
+			component: () => import('../views/ProfileView.vue')
+		},
+		{
 			path: '/client',
 			children: [
 				{
@@ -120,7 +125,7 @@ router.beforeEach(async (to) => {
 	const authStore = useAuthStore();
 
 	// redirect to login page if not logged in and trying to access a restricted page
-	const publicPages = ['/', '/login', '/signup', '/chat'];
+	const publicPages = ['/', '/login', '/signup'];
 	const authRequired = !publicPages.includes(to.path);
 
 	const clientPages = ['client']

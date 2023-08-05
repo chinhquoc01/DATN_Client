@@ -10,8 +10,15 @@
                         <v-card-title>{{ workDetail.title }}</v-card-title>
                         
                         <v-card-subtitle>{{ workDetail.description }}</v-card-subtitle>
+
+                        <div>
+                            <div class="title-col">Tài liệu công việc:</div>
+                            <div v-for="file in attachmentsWork">
+                                <a :href="file.href" :download="file.fileName">{{ file.fileName }}</a>
+                            </div>
+                        </div>
                     </v-card-item>
-                    
+                    <hr>
                     <v-card-text>
                         
                         <div class="d-flex">
@@ -28,27 +35,27 @@
                             :step="1"
                             hide-details
                         ></v-slider>
-                        <div class="d-flex">
+                        <div class="d-flex mt-2">
                             <div class="title-col">Loại công việc:</div>
                             <div>{{ getWorkType(workDetail.type) }}</div>
                         </div>
-                        <div class="d-flex">
+                        <div class="d-flex mt-2">
                             <div class="title-col">Thu nhập đề xuất:</div>
                             <div>{{ formatCurrency(workDetail.budget) }}</div>
                         </div>
-                        <div class="d-flex">
+                        <div class="d-flex mt-2">
                             <div class="title-col">Thu nhập thoả thuận:</div>
                             <div>{{ formatCurrency(workDetail.expectedIncome) }}</div>
                         </div>
-                        <div class="d-flex">
+                        <div class="d-flex mt-2">
                             <div class="title-col">Ngày bắt đầu:</div>
-                            <div>{{ workDetail.startDate }}</div>
+                            <div>{{ formatDate(workDetail.startDate) }}</div>
                         </div>
-                        <div class="d-flex">
+                        <div class="d-flex mt-2">
                             <div class="title-col">Ngày kết thúc:</div>
-                            <div>{{ workDetail.endDate }}</div>
+                            <div>{{ formatDate(workDetail.endDate) }}</div>
                         </div>
-                        <div v-if="attachments && attachments.length" class="d-flex">
+                        <div v-if="attachments && attachments.length" class="d-flex mt-2">
                             <div class="title-col">Tệp đính kèm:</div>
                             <div>
                                 <div v-for="file in attachments" class="d-flex align-center">
@@ -57,7 +64,7 @@
                                 </div>
                             </div>
                         </div>
-                        <v-file-input v-if="workDetail.status != enums.workStatus.completed" label="Tệp đính kèm" multiple v-model="addedFiles" prepend-icon="" append-icon="mdi-paperclip"></v-file-input>
+                        <v-file-input class="mt-2" v-if="workDetail.status != enums.workStatus.completed" label="Tệp đính kèm" multiple v-model="addedFiles" prepend-icon="" append-icon="mdi-paperclip"></v-file-input>
                     </v-card-text>
                 </v-card>
                 <v-btn color="primary" :disabled="workDetail.status == enums.workStatus.completed" @click="save" block>Lưu</v-btn>
@@ -73,6 +80,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCommonUltilities } from '@/services/commonUlti';
 import { useAttachments } from '@/services/useAttachment';
 import workApi from '@/apis/workApi'
+import attachmentApi from '@/apis/attachmentApi';
 
 const {toast, router} = useCommonUltilities()
 const authStore = useAuthStore()
@@ -103,8 +111,29 @@ const getAttachments = () => {
     getFileKey(props.workDetail.id, enums.refType.workProgress)
 }
 
+
+
+const attachmentsWork = ref([])
+const getAttachmentWork = async () => {
+    attachmentsWork.value = []
+    let res = await attachmentApi.getFileKeyByRef(props.workDetail.id, enums.refType.JD)
+    if (res && res.status == 200) {
+        let fileKeys = res.data
+        fileKeys.forEach(async fileName => {
+            let res = await attachmentApi.getByKey(fileName)
+            if (res && res.status == 200) {
+                let fileObj = {
+                    href: URL.createObjectURL(res.data),
+                    fileName: fileName
+                }
+                attachmentsWork.value.push(fileObj)
+            }
+        });
+    }
+}
+
 defineExpose({
-    getAttachments
+    getAttachments, getAttachmentWork
 })
 
 const save = async () => {

@@ -15,11 +15,38 @@
                 <v-card-text>
                     <v-window v-model="tab">
                         <v-window-item value="one">
-                            <div>
-                                work info
-                                <div v-for="file in attachments">
-                                    <a :href="file.href" :download="file.fileName">{{ file.fileName }}</a>
+                            <div v-if="workInfo">
+                                <div class="d-flex">
+                                    <div class="title-col">Tên công việc:</div>
+                                    <div class="data-col">{{ workInfo.title }}</div>
                                 </div>
+                                <div class="d-flex">
+                                    <div class="title-col">Loại công việc:</div>
+                                    <div class="data-col">{{ getWorkType(workInfo.type) }}</div>
+                                </div>
+                                <div v-if="workInfo.location" class="d-flex">
+                                    <div class="title-col">Địa chỉ:</div>
+                                    <div class="data-col">{{ workInfo.location }}</div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="title-col">Mô tả:</div>
+                                    <div class="data-col">{{ workInfo.description }}</div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="title-col">Ngân sách:</div>
+                                    <div class="data-col">{{ formatCurrency(workInfo.budget) }}</div>
+                                </div>
+                                <div class="d-flex" v-if="attachments && attachments.length">
+                                    <div class="title-col">Tệp đính kèm:</div>
+                                    <div class="data-col" v-for="file in attachments">
+                                        <a :href="file.href" :download="file.fileName">{{ file.fileName }}</a>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="title-col">Ngày đăng:</div>
+                                    <div class="data-col">{{ formatDate(workInfo.createdDate) }}</div>
+                                </div>
+
                             </div>
                         </v-window-item>
 
@@ -28,12 +55,12 @@
                                 <div v-if="proposalList && proposalList.length > 0">
                                     <div v-for="(proposal, index) in proposalList" :key="index">
                                         <div class="d-flex proposal-item">
-                                            <div class="avatar-container">
+                                            <div class="avatar-container mr-3">
                                                 <img :src="proposal.avatar || `https://ui-avatars.com/api/?name=${proposal.freelancerName}`" class="rounded-circle" alt="" srcset=""/>
                                             </div>
                                             <div class="flex-column w-100">
                                                 <div class="d-flex justify-space-between align-center">
-                                                    <div>{{ proposal.freelancerName }} <b v-if="proposal.jobTitle">({{ proposal.jobTitle }})</b></div>
+                                                    <a :href="`/profile/${proposal.freelancerId}`" target="_blank" class="text-h6">{{ proposal.freelancerName }} <b v-if="proposal.jobTitle">({{ proposal.jobTitle }})</b></a>
                                                     <div class="d-flex">
                                                         <v-btn color="success" rounded="xl" size="medium" class="pr-2 pl-2" variant="outlined" @click="message(proposal)">
                                                             Nhắn tin
@@ -62,19 +89,28 @@
                                                     </div>
                                                 </div>
                                                 <div>{{ proposal.address }}</div>
-                                                <div>Thư ngỏ: {{ proposal.content }}</div>
-                                                <div>Thu nhập mong muốn: {{ formatCurrency(proposal.price) }}</div>
+                                                <div class="d-flex mt-3 row-data">
+                                                    <div class="title-col">Thư ngỏ: </div>
+                                                    <div class="data-col">{{ proposal.content }}</div>
+                                                </div>
+                                                <div class="d-flex row-data">
+                                                    <div class="title-col">Thu nhập mong muốn: </div>
+                                                    <div class="data-col">{{ formatCurrency(proposal.price) }}</div>
+                                                </div>
                                                 <div v-if="proposal.attachments && proposal.attachments.length" class="d-flex">
-                                                    <div class="title-col">Tệp đính kèm:</div>
+                                                    <div class="title-col row-data">Tệp đính kèm:</div>
                                                     <div>
-                                                        <div v-for="file in proposal.attachments" class="d-flex align-center">
+                                                        <div v-for="file in proposal.attachments" class="d-flex align-center data-col">
                                                             <a :href="file.href" :download="file.fileName">{{ file.fileName }}</a>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <v-chip-group>
-                                                    <v-chip v-for="field in JSON.parse(proposal.skills)">{{ field }}</v-chip>
-                                                </v-chip-group>
+                                                <div class="d-flex row-data">
+                                                    <div class="title-col">Kỹ năng công việc:</div>
+                                                    <v-chip-group>
+                                                        <v-chip v-for="field in JSON.parse(proposal.skills)">{{ field }}</v-chip>
+                                                    </v-chip-group>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -88,28 +124,32 @@
                         <v-window-item value="three">
                             <div v-if="workProgress" class="work-progress">
                                 <div class="d-flex">
+                                    <div class="title-col">Người thực hiện:</div>
+                                    <a :href="`/profile/${freelancerInfo.id}`" target="_blank"  class="data-col">{{ freelancerInfo.name }}</a>
+                                </div>
+                                <div class="d-flex">
                                     <div class="title-col">Thu nhập đề xuất:</div>
-                                    <div>{{ formatCurrency(workProgress.budget) }}</div>
+                                    <div class="data-col">{{ formatCurrency(workProgress.budget) }}</div>
                                 </div>
                                 <div class="d-flex">
                                     <div class="title-col">Thu nhập thoả thuận:</div>
-                                    <div>{{ formatCurrency(workProgress.expectedIncome) }}</div>
+                                    <div class="data-col">{{ formatCurrency(workProgress.expectedIncome) }}</div>
                                 </div>
                                 <div class="d-flex">
                                     <div class="title-col">Ngày bắt đầu:</div>
-                                    <div>{{ formatDate(workProgress.startDate) }}</div>
+                                    <div class="data-col">{{ formatDate(workProgress.startDate) }}</div>
                                 </div>
                                 <div class="d-flex">
                                     <div class="title-col">Ngày kết thúc:</div>
-                                    <div>{{ formatDate(workProgress.endDate) }}</div>
+                                    <div class="data-col">{{ formatDate(workProgress.endDate) }}</div>
                                 </div>
                                 <div class="d-flex">
                                     <div class="title-col">Tiến độ:</div>
-                                    <div>{{ workProgress.progress }}%</div>
+                                    <div class="data-col">{{ workProgress.progress }}%</div>
                                 </div>
                                 <div v-if="progressAttachments && progressAttachments.length" class="d-flex">
                                     <div class="title-col">Tệp đính kèm:</div>
-                                    <div>
+                                    <div class="data-col">
                                         <div v-for="file in progressAttachments" class="d-flex align-center">
                                             <a :href="file.href" :download="file.fileName">{{ file.fileName }}</a>
                                         </div>
@@ -165,7 +205,7 @@ const isShowDialog = ref(false)
 const isShowRating = ref(false)
 
 const workId = route.params.workId
-const workInfo = ref({})
+const workInfo = ref(null)
 const getWorkInfo = async () => {
     let res = await workApi.getById(workId)
     if (res && res.status == 200) {
@@ -273,6 +313,19 @@ const getFreelancerId = async (freelancerId) => {
         freelancerInfo.value = res.data
     }
 }
+
+const getWorkType = (workType) => {
+	switch (workType) {
+		case 0:
+			return 'Online'
+		case 1:
+			return 'Offline'
+		case 2:
+			return 'Hybrid'
+		default:
+			return ''
+	}
+}
 </script>
 
 <style scoped>
@@ -284,9 +337,19 @@ const getFreelancerId = async (freelancerId) => {
     width: 75px ;
 }
 .title-col {
-    min-width: 150px;
+    min-width: 155px;
+    line-height: 32px;
 }
 .work-progress > div {
     margin-bottom: 10px;
+}
+.v-chip-group .v-chip {
+    margin: 0 8px 0 0;
+}
+.row-data {
+    /* height: 32px; */
+}
+.data-col {
+    line-height: 32px;
 }
 </style>

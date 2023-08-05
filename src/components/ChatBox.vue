@@ -9,7 +9,7 @@
                         {{user.name}}
                     </template>
                     <template v-slot:subtitle>
-                        <span>to Alex, Scott, Jennifer</span>
+                        <span></span>
                     </template>
 
                 </v-list-item>
@@ -20,7 +20,7 @@
             <div v-if="receiverInfo" class="chat-info d-flex align-center">
                 <img :src="receiverInfo.avatar || `https://ui-avatars.com/api/?name=${receiverInfo.name}`" 
                     class="rounded-circle h-75 mr-2 ml-2" alt="" srcset=""/>
-                <div>{{ receiverInfo.name }}</div>
+                <a :href="`/profile/${receiverInfo.id}`" target="_blank" class="text-h6">{{ receiverInfo.name }}</a>
             </div>
             <div id="message-history-id" class="message-history">
                 <div class="d-flex flex-column">

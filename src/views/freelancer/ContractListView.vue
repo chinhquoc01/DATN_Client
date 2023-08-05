@@ -2,7 +2,7 @@
     <div class="d-flex w-100 align-items-center justify-center">
         <v-col sm="8" md="5">
             <div v-for="(contract, index) in contractList" :key="index">
-                <v-card style="color: rgb(127, 138, 131);" class="mx-auto" max-width="400" variant="outlined">
+                <v-card style="color: rgb(127, 138, 131);" class="mx-auto mt-3" max-width="400" >
                     <v-card-item>
                         <div v-html="getProposalStatus(contract.status)"></div>
                         <a style="cursor: pointer;" @click="showContractDetail(contract.id)">{{ contract.contractName }}</a>
