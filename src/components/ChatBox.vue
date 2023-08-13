@@ -22,14 +22,25 @@
                     class="rounded-circle h-75 mr-2 ml-2" alt="" srcset=""/>
                 <a :href="`/profile/${receiverInfo.id}`" target="_blank" class="text-h6">{{ receiverInfo.name }}</a>
             </div>
-            <div id="message-history-id" class="message-history">
-                <div class="d-flex flex-column">
-                    <div v-for="(message, index) in messageList" :key="index" class="message-group" :class="{'my-message-group': message.senderId == senderId, 'their-message-group': message.senderId == receiverId}">
-                        <div class="message">
-                            {{ message.content }}
-                            <v-tooltip activator="parent">
-                                {{ handleDateTime(message.createdDate) }}
-                            </v-tooltip>
+            <div id="message-history-id" class="message-history" ref="messageSection" @scroll="onScrollMessage">
+                <div >
+                    <div style="text-align: center;" v-show="showLoadingChat">
+                        <v-progress-circular
+                            indeterminate
+                            color="primary"
+                            style="margin: auto;"
+                            >
+                        </v-progress-circular>
+                    </div>
+                    <div class="d-flex flex-column" v-for="(message, index) in messageList" :key="index">
+                        <div class="message-group" 
+                        :class="{'my-message-group': message.senderId == senderId, 'their-message-group': message.senderId == receiverId}">
+                            <div class="message">
+                                {{ message.content }}
+                                <v-tooltip activator="parent">
+                                    {{ handleDateTime(message.createdDate) }}
+                                </v-tooltip>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -56,6 +67,12 @@ import userApi from '@/apis/userApi';
 const { route } = useCommonUltilities()
 const authStore = useAuthStore()
 
+const showLoadingChat = ref(false)
+const onScrollMessage = (e) => {
+    if (e.target.scrollTop == 0) {
+        getChatHistory()
+    }
+}
 
 const connection = new HubConnectionBuilder().withUrl(`${import.meta.env.VITE_BASE_URL}/chatHub`, {
     skipNegotiation: true,
@@ -67,10 +84,13 @@ const senderId = ref(authStore.userInfo.id)
 const receiverId = ref(route.query.userId)
 const receiverInfo = ref(null)
 
+let limit = 20
+let offset = 0
 const selectChat = async (user) => {
     receiverInfo.value = user
     receiverId.value = user.id
-    messageList.value = await getChatHistory(senderId.value, receiverId.value)
+    messageList.value = []
+    await getChatHistory()
     await nextTick()
     scrollToBottom('message-history-id')
     if (channel.value) {
@@ -116,11 +136,17 @@ const sendMessage = async () => {
     }
 }
 
-const getChatHistory = async (senderId, receiverId) => {
-    let res = await messageApi.getChatHistory(senderId, receiverId)
-    if (res.status == 200) {
-        return res.data
-    } return []
+const getChatHistory = async () => {
+    showLoadingChat.value = true
+    let res = await messageApi.getChatHistory(senderId.value, receiverId.value, limit, offset)
+    showLoadingChat.value = false
+    if (res.status == 200 && res.data.length) {
+        offset += limit
+        messageList.value.unshift(...res.data)
+    } else {
+
+    }
+
 }
 
 const listUser = ref([])
@@ -136,7 +162,7 @@ getListUserMessage(senderId.value).then(async () => {
     if (receiverId.value) { 
         let foundUser = listUser.value.find(user => user.id == receiverId.value)
         if(!foundUser) {
-            let userInfoRes = await userApi.get(receiverId.value)
+            let userInfoRes = await userApi.getById(receiverId.value)
             if (userInfoRes.status == 200) {
                 listUser.value.unshift(userInfoRes.data)
                 selectChat(userInfoRes.data)
@@ -151,7 +177,6 @@ getListUserMessage(senderId.value).then(async () => {
 
 const userListWidth = ref(25)
 const handleResize = (e) => {
-    console.log(e);
     const percentage = (e.pageX / window.innerWidth) * 100
 
     // if (percentage >= 10 && percentage <= 90) {
@@ -239,5 +264,9 @@ const handleDateTime = (isoDatetime) => {
     background-color: white;
     z-index: 99;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 4px 0px;
+}
+.loading {
+    display: flex;
+    justify-content: space-between;
 }
 </style>

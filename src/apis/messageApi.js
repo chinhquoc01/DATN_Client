@@ -10,8 +10,8 @@ class MessageApi extends BaseApi {
         return res
     }
 
-    async getChatHistory(senderId, recevierId) {
-        let res = await this.get(this.API_URL + '/history' + `?senderId=${senderId}&receiverId=${recevierId}`)
+    async getChatHistory(senderId, recevierId, limit, offset) {
+        let res = await this.get(this.API_URL + '/history' + `?senderId=${senderId}&receiverId=${recevierId}&limit=${limit}&offset=${offset}`)
         return res
     }
 

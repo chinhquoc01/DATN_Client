@@ -29,8 +29,18 @@
                                     <div class="data-col">{{ workInfo.location }}</div>
                                 </div>
                                 <div class="d-flex">
+                                    <div class="title-col">Lĩnh vực:</div>
+                                    <div class="data-col">{{ workInfo.workField }}</div>
+                                </div>
+                                <div class="d-flex">
                                     <div class="title-col">Mô tả:</div>
                                     <div class="data-col">{{ workInfo.description }}</div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="title-col">Yêu cầu kỹ năng:</div>
+                                    <v-chip-group>
+                                        <v-chip v-for="field in JSON.parse(workInfo.fieldTag)">{{ field }}</v-chip>
+                                    </v-chip-group>
                                 </div>
                                 <div class="d-flex">
                                     <div class="title-col">Ngân sách:</div>
@@ -116,7 +126,33 @@
                                     </div>
                                 </div>
                                 <div v-else>
-                                    <div>Chưa có người ứng tuyển. Vui lòng mời</div>
+                                    <div>Chưa có người ứng tuyển. Dưới đây là danh sách ứng viên tiềm năng:</div>
+                                    <div v-for="(freelancer, index) in suggestFreelancer" :key="index" class="mt-3">
+                                        <v-card>
+                                            <v-card-item>
+                                                <a :href="`/profile/${freelancer.id}`" target="_blank">{{ freelancer.name }} ({{ freelancer.jobTitle }})</a>
+                                                <div class="d-flex row-data" v-if="freelancer.workField">
+                                                    <div class="title-col">Lĩnh vực làm việc:</div>
+                                                    <div class="data-col">{{ freelancer.workField }}</div>
+                                                </div>
+                                                <div class="d-flex row-data">
+                                                    <div class="title-col">Điểm đánh giá:</div>
+                                                    <v-rating
+                                                        v-model="freelancer.rating"
+                                                        bg-color="orange-lighten-1"
+                                                        color="blue"
+                                                        disabled
+                                                    ></v-rating>
+                                                </div>
+                                                <div class="d-flex row-data">
+                                                    <div class="title-col">Kỹ năng công việc:</div>
+                                                    <v-chip-group>
+                                                        <v-chip v-for="field in JSON.parse(freelancer.skills)">{{ field }}</v-chip>
+                                                    </v-chip-group>
+                                                </div>
+                                            </v-card-item>
+                                        </v-card>
+                                    </div>
                                 </div>
                             </div>
                         </v-window-item>
@@ -210,6 +246,7 @@ const getWorkInfo = async () => {
     let res = await workApi.getById(workId)
     if (res && res.status == 200) {
         workInfo.value = res.data
+        getSuggestFreelancer()
         getFileKey(workInfo.value.id, enums.refType.JD)
         if (workInfo.value.freelancerId && workInfo.value.freelancerId != '00000000-0000-0000-0000-000000000000') {
             getProgress(workInfo.value)
@@ -225,7 +262,11 @@ const getProposalList = async () => {
     let res = await proposalApi.getProposalByWork(workId)
     if (res && res.status == 200) {
         proposalList.value = res.data
+        if (!proposalList.value.length) {
+            getSuggestFreelancer()
+        }
         getProposalAttachs(proposalList.value)
+
     } 
 }
 const getProposalAttachs = async (proposalList) => {
@@ -291,7 +332,6 @@ const getAttachment = async (fileName) => {
             fileName: fileName
         }
         return fileObj
-        // progressAttachments.value.push(fileObj)
     }
 }
 
@@ -326,6 +366,15 @@ const getWorkType = (workType) => {
 			return ''
 	}
 }
+
+const suggestFreelancer = ref([])
+const getSuggestFreelancer = async () => {
+    let res = await userApi.getSuggestFreelancer(workInfo.value.workField, workInfo.value.fieldTag)
+    if (res && res.status == 200) {
+        suggestFreelancer.value = res.data
+    }
+}
+
 </script>
 
 <style scoped>

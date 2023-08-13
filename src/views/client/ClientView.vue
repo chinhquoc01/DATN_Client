@@ -58,6 +58,7 @@ import WorkCard from '@/components/WorkCard.vue'
 import enums from '@/constants/enums';
 
 const authStore = store.useAuthStore()
+const loadingStore = store.useLoadingStore()
 const { toast, router } = useCommonUltilities()
 
 const workStatusList = ref([
@@ -87,7 +88,9 @@ const workType = ref(-1)
 const workList = ref([])
 const clientId = authStore.userInfo.id
 const getWorkListByClientId = async (workStatus = null, workType = null) => {
+    loadingStore.setLoading(true)
     let res = await workApi.getByClientId(clientId, workStatus, workType)
+    loadingStore.setLoading(false)
     if (res && (res.status == 200 || res.status == 204)) {
         workList.value = res.data
     }

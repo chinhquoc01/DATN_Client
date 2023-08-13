@@ -23,6 +23,7 @@
                     </v-menu>
                 </div>
                 <div v-if="authStore.loggedIn" @click="clickMessage" class="nav-item ml-4">Tin nhắn</div>
+                <div v-if="messageSenderId" class="red-dot"></div>
             </div>
         </v-app-bar-title>
         <v-btn v-if="!authStore.loggedIn" class="" :to="{ name: 'login' }">Đăng nhập</v-btn>
@@ -44,10 +45,10 @@
                                 <v-btn rounded variant="text" :to="{name: 'updateProfile' }">
                                     Chỉnh sửa hồ sơ
                                 </v-btn>
-                                <!-- <v-divider class="my-3"></v-divider>
-                                <v-btn rounded variant="text">
-                                    Disconnect
-                                </v-btn> -->
+                                <v-divider class="my-3"></v-divider>
+                                <v-btn rounded variant="text" :to="{name: 'profile', params: {userId: authStore.userInfo.id}}">
+                                    Thông tin cá nhân
+                                </v-btn>
                             </div>
                         </v-card-text>
                     </v-card>
@@ -62,16 +63,56 @@
 import router from '@/router';
 import { useToast } from 'vue-toastification';
 import { store } from '@/stores';
+import { HubConnectionBuilder, HttpTransportType } from '@microsoft/signalr'
+import { ref } from 'vue'
+
 const authStore = store.useAuthStore()
+
+const connection = new HubConnectionBuilder().withUrl(`${import.meta.env.VITE_BASE_URL}/chatHub`, {
+    skipNegotiation: true,
+    transport: HttpTransportType.WebSockets
+}).withAutomaticReconnect().build()
+
+const messageSenderId = ref('')
+const initConnection = () => {
+    let channel = 'Noti-message-' + authStore.userInfo?.id
+    connection.on(channel, function (senderId) {
+        messageSenderId.value = senderId
+    })
+}
+const startConnection = () => {
+    connection.start().then(() => {
+        console.log('start');
+    }).catch((error) => {
+        console.log(error);
+    })
+}
+
+if (authStore.userInfo?.id) {
+    initConnection()
+    startConnection()
+
+}
+
 const toast = useToast()
 const clickHome = () => {
     router.push({ name: 'home' })
 }
 const clickMessage = () => {
+    let senderId = messageSenderId.value
+    messageSenderId.value = ''
     if (authStore.isClient()) {
-        router.push({ name: 'chatClient' })
+        if (senderId) {
+            router.push({ name: 'chatClient', query: {userId: senderId} })
+        } else {
+            router.push({ name: 'chatClient' })
+        }
     } else if (authStore.isFreelancer()) {
-        router.push({ name: 'chatFreelancer' })
+        if (senderId) {
+            router.push({ name: 'chatFreelancer', query: {userId: senderId} })
+        } else {
+            router.push({ name: 'chatFreelancer' })
+        }
     }
 }
 const clickProposal = () => {
@@ -103,5 +144,12 @@ const signOut = () => {
 }
 .avatar {
     cursor: pointer;
+}
+
+.red-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: red;
 }
 </style>

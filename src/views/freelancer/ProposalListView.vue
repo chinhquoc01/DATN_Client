@@ -21,15 +21,19 @@ import WorkCardFreelancer from '@/components/WorkCardFreelancer.vue';
 import { ref } from 'vue';
 import { useCommonUltilities } from '@/services/commonUlti'
 import { useAuthStore } from '@/stores/authStore';
+import { useLoadingStore } from '@/stores/loadingStore';
 import workApi from '@/apis/workApi';
 
 const authStore = useAuthStore()
+const loadingStore = useLoadingStore()
 const workList = ref([])
-const getSuggestWork = async () => {
+const getProposalList = async () => {
+    loadingStore.setLoading(true)
     let res = await workApi.getProposalList(authStore.userInfo.id)
+    loadingStore.setLoading(false)
     if (res && (res.status == 200 || res.status == 204)) {
         workList.value = res.data
     }
 }
-getSuggestWork()
+getProposalList()
 </script>

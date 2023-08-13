@@ -49,16 +49,8 @@
 				<v-chip-group>
 					<v-chip v-for="field in fieldTag">{{ field }}</v-chip>
 				</v-chip-group>
-				<div class="d-flex justify-space-evenly">
-					<div class="d-flex flex-column align-center">
-						<div><b>{{ workInfo.proposalCount }}</b></div>
-						<div>Ứng tuyển</div>
-					</div>
-					<div class="d-flex flex-column align-center">
-						<div><b>{{ workInfo.messageCount }}</b></div>
-						<div>Tin nhắn</div>
-					</div>
-				</div>
+				<v-divider class="mt-2 mb-2"></v-divider>
+				<div>Số lượt ứng tuyển: <b> {{ workInfo.proposalCount }}</b></div>
 			</div>
 		</v-card-item>
 

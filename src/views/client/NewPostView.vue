@@ -27,7 +27,7 @@
                             clearable 
                             label="Địa chỉ"></v-text-field>
 
-                        <v-combobox v-model="jobInfo.workerType" :items="workerTypes" label="Đối tượng làm việc"></v-combobox>
+                        <v-combobox v-model="jobInfo.workField" :items="workerTypes" label="Đối tượng làm việc"></v-combobox>
                         <v-combobox v-model="jobInfo.fieldTagList" :items="skills" label="Kỹ năng công việc" multiple
                             chips></v-combobox>
 

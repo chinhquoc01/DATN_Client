@@ -1,6 +1,6 @@
 <template>
-    <div class="d-flex w-100 align-items-center justify-center">
-        <div class="d-flex flex-row w-100 justify-space-evenly mt-6">
+    <div class="d-flex w-100 align-items-center justify-center" style="height: calc(100vh - 64px);">
+        <div class="d-flex flex-row w-100 justify-space-evenly pt-6" style="overflow-y: auto;" @scroll="onScroll">
             <v-sheet class="w-50">
                 <div v-if="workList && workList.length">
                     <div v-for="work in workList">
@@ -30,6 +30,7 @@
                     ></v-range-slider>
                     <v-text-field v-model="maxRange" class="max-range" type="number"></v-text-field>
                 </div>
+                <v-combobox v-model="filter.workField" :items="workerTypes" label="Lĩnh vực công việc"></v-combobox>
                 <v-combobox v-model="filter.skillList" :items="skills" label="Kỹ năng công việc" multiple
                     chips></v-combobox>
                 <v-text-field v-model="filter.searchQuery" 
@@ -50,13 +51,34 @@ import WorkCardFreelancer from '@/components/WorkCardFreelancer.vue';
 import { ref } from 'vue';
 import { useCommonUltilities } from '@/services/commonUlti'
 import { useAuthStore } from '@/stores/authStore';
+import { useLoadingStore } from '@/stores/loadingStore';
 import workApi from '@/apis/workApi';
 import skillList from '@/constants/skillList.js'
+import workerType from '@/constants/workerType.js'
 
+
+workerType.unshift('Tất cả')
+const workerTypes = ref(workerType)
 const skills = ref(skillList)
 const { toast, router, enums } = useCommonUltilities()
 const authStore = useAuthStore()
+const loadingStore = useLoadingStore()
 const workList = ref([])
+
+
+const onScroll = (e) => {
+    if (e.target.scrollTop >= e.target.offsetHeight) {
+        console.log('bottom');
+    }
+}
+const filter = ref({
+    type: -1,
+    searchQuery: '',
+    range: [],
+    skillList: [],
+    workField: ''
+})
+
 const getSuggestWork = async (workFilter = null) => {
     if (!workFilter) {
         workFilter = {}
@@ -64,8 +86,13 @@ const getSuggestWork = async (workFilter = null) => {
         workFilter.searchQuery = ''
         workFilter.type = -1
         workFilter.range = []
+        workFilter.workField = authStore.userInfo.workField || ''
+    } else if (workFilter.workField == 'Tất cả') {
+        workFilter.workField = ''
     }
+    loadingStore.setLoading(true)
     let res = await workApi.getWorkForFreelancer(authStore.userInfo.id, workFilter)
+    loadingStore.setLoading(false)
     if (res && (res.status == 200 || res.status == 204)) {
         workList.value = res.data
     }
@@ -79,22 +106,13 @@ const workTypeList = ref([
     {title: 'Hybrid', value: enums.workType.hybrid},
 ])
 const updateWorkFilter = () => {
-    // let workTypeValue = workType.value != -1 ? workType.value : null
-    // if (searchQuery.value) {
-    //     searchQuery.value = searchQuery.value.replace(/(\r\n|\n|\r)/gm, "")
-    // }
     getSuggestWork(filter.value)
 }
 
 const maxRange = ref(9999999)
 const minRange = ref(10000)
 
-const filter = ref({
-    type: -1,
-    searchQuery: '',
-    range: [],
-    skillList: []
-})
+
 
 </script>
 

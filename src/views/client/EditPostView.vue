@@ -25,16 +25,10 @@
                             clearable 
                             label="Địa chỉ"></v-text-field>
 
+                        <v-combobox v-model="jobInfo.workField" :items="workerTypes" label="Đối tượng làm việc"></v-combobox>
                         <v-combobox v-model="jobInfo.fieldTagList" :items="skills" label="Kỹ năng công việc" multiple
                             chips></v-combobox>
 
-                        <v-radio-group v-model="jobInfo.budgetType" inline>
-                            <template v-slot:label>
-                                <div>Cách tính công</div>
-                            </template>
-                            <v-radio label="Theo giờ" :value="0"></v-radio>
-                            <v-radio label="Theo công việc" :value="1"></v-radio>
-                        </v-radio-group>
 
                         <v-text-field v-model="jobInfo.budget" :readonly="loading" type="number" class="mb-2"
                         clearable label="Ngân sách" suffix="VND"></v-text-field>
@@ -74,7 +68,9 @@ import workApi from '@/apis/workApi.js'
 import { useAuthStore } from '@/stores/authStore';
 import { useCommonUltilities } from '@/services/commonUlti'
 import { useAttachments } from '@/services/useAttachment';
+import workerType from '@/constants/workerType.js'
 
+const workerTypes = ref(workerType)
 const { route, router, toast, enums } = useCommonUltilities()
 const authStore = useAuthStore()
 

@@ -20,6 +20,10 @@
                     <div class="data-col">{{ workInfo.location }}</div>
                 </div>
                 <div class="d-flex row-data">
+                    <div class="title-col">Lĩnh vực:</div>
+                    <div class="data-col">{{ workInfo.workField }}</div>
+                </div>
+                <div class="d-flex row-data">
                     <div class="title-col">Thu nhập:</div>
                     <div class="data-col">{{ formatCurrency(workInfo.budget) }}</div>
                 </div>

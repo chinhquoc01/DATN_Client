@@ -5,14 +5,14 @@
             <div class="d-flex align-items-center justify-space-between">
                 <div class="d-flex mt-2">
                     <div class="avatar-container mr-3">
-                        <img :src="userInfo.clientAvatar || `https://ui-avatars.com/api/?name=${userInfo.name}`" class="rounded-circle" alt="" srcset=""/>
+                        <img :src="userInfo.avatar || `https://ui-avatars.com/api/?name=${userInfo.name}`" class="rounded-circle" alt="" srcset=""/>
                     </div>
                     <div>
                         <div class="text-h6">{{ userInfo.name }} ({{ getUserType(userInfo.userType) }})</div>
                         <div>{{ userInfo.address }}</div>
                     </div>
                 </div>
-                <v-btn color="#5865f2" target="_blank" :to="{name: authStore.isClient() ? 'chatClient' : 'chatFreelancer', query: { userId: userInfo.id }}" 
+                <v-btn v-if="userInfo.id != authStore.userInfo.id" color="#5865f2" target="_blank" :to="{name: authStore.isClient() ? 'chatClient' : 'chatFreelancer', query: { userId: userInfo.id }}" 
                     rounded="xl" variant="tonal" class="mt-2">Nhắn tin</v-btn>
             </div>
             <div class="d-flex row-data">
@@ -29,7 +29,7 @@
             </div>
             <div v-if="userInfo.userType == enums.userType.freelancer" class="mt-3">
                 <div class="text-h6">Thông tin người tìm việc</div>
-                <div class="d-flex row-data">
+                <div class="d-flex row-data" v-if="userInfo.workField">
                     <div class="title-col">Lĩnh vực làm việc:</div>
                     <div class="data-col">{{ userInfo.workField }}</div>
                 </div>
@@ -71,6 +71,7 @@
                     <div class="data-col">{{ formatDate(work.createdDate) }}</div>
                 </div>
             </div>
+            <div v-if="!workInfo || workInfo.length === 0" class="mt-3">Chưa có lịch sử công việc</div>
         </v-card>
         <v-card class="mx-auto pa-4 mt-4 mb-6" max-width="644" min-width="644">
             <div class="text-h5">Lịch sử đánh giá</div>
@@ -98,6 +99,7 @@
                     <div class="data-col">{{ review.workTitle }}</div>
                 </div>
             </div>
+            <div v-if="!reviewInfo || reviewInfo.length ===0" class="mt-3">Chưa có lượt đánh giá</div>
         </v-card>
     </div>
 </template>

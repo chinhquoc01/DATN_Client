@@ -32,6 +32,7 @@
                                 clearable label="Chức danh"></v-text-field>
                             <v-text-field v-model="userInfo.description" :readonly="loading" :rules="[required]"
                                 class="mb-2" clearable label="Giới thiệu bản thân"></v-text-field>
+                            <v-combobox v-model="userInfo.workField" :items="workerTypes" label="Lĩnh vực làm việc"></v-combobox>
                             <v-combobox v-model="userInfo.skillList" :items="items" label="Kỹ năng công việc" multiple
                                 chips></v-combobox>
                         </div>
@@ -64,7 +65,9 @@ import { useAuthStore } from '@/stores/authStore';
 import userApi from '@/apis/userApi';
 import { useCommonUltilities } from '@/services/commonUlti'
 import { useAttachments } from '@/services/useAttachment';
+import workerType from '@/constants/workerType.js'
 
+const workerTypes = ref(workerType)
 const { route, router, toast, enums } = useCommonUltilities()
 const authStore = useAuthStore()
 
